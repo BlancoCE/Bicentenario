@@ -1,0 +1,50 @@
+:root {
+  color: rgba(0, 0, 0, 0.87);
+  background-color: white;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 300px;
+  background: #dadadb;
+  padding: 40px;  
+  border-radius: 20px;
+}
+
+.menu {
+  background-color: rgb(13, 37, 67);
+  color: white;
+  display: flex;
+}
+
+.menu a,
+.menu button {
+  text-decoration: none;
+  color: white;
+  padding: 15px 10px;
+  font-family: Arial;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.menu a:hover,
+.menu button:hover {
+  background-color: rgb(124, 168, 221);
+}

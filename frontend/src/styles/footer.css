@@ -1,0 +1,48 @@
+.footer-container {
+    width: 100%;
+    position: relative;
+    background-color: #02022b;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 0;
+}
+
+/*
+.footer-content {
+    position: relative;
+    width: 100%;
+    max-width: 1920px;
+}
+*/
+
+.footer-image {
+    width: 100%;
+    display: block;
+    
+}
+
+.footer-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    font-size: 24px;
+}
+
+.contact-info {
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.contact-info p {
+    margin: 5px 0;
+}
