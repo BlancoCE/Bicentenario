@@ -85,7 +85,7 @@ export const Ingreso = () => {
                     ¿Sin cuenta? <Link to="/register">Registrarse</Link>
                 </p>
                 <p className="recover-password">
-                    <Link to="/">Me olvide mi contraseña</Link>
+                    <Link to="/recuperacion">Me olvide mi contraseña</Link>
                 </p>
             </form>
         </main>

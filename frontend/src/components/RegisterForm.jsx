@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import "../styles/register.css";
 import "../styles/exito.css";
+import { useTranslation } from "react-i18next";
 
 export const RegisterForm = () => {
     const captcha = useRef(null);
+    const { t } = useTranslation();
     const navigate = useNavigate();
     
     const [formData, setFormData] = useState({
@@ -29,13 +31,14 @@ export const RegisterForm = () => {
         e.preventDefault();
         setErrorMessage("");
 
+        // 🔹 Validaciones
         if (!captcha.current.getValue()) {
             setErrorMessage("Por favor, completa el CAPTCHA antes de continuar.");
             return;
         }
 
         if (!formData.nombre.trim() || !formData.correo.trim() || !formData.password.trim() ||
-            !formData.pais.trim() || !formData.ciudad.trim()) {
+            !formData.pais.trim() || !formData.ciudad.trim() || !formData.telefono.trim()) {
             setErrorMessage("Todos los campos requeridos deben estar llenos.");
             return;
         }
@@ -53,19 +56,22 @@ export const RegisterForm = () => {
                     nombre: formData.nombre,
                     correo: formData.correo,
                     password: formData.password,
+                    telefono: formData.telefono,
+                    pais: formData.pais,
+                    ciudad: formData.ciudad
                 }),
             });
 
+            const data = await response.json();
+
             if (!response.ok) {
-                const data = await response.json();
                 setErrorMessage("Error: " + data.error);
                 return;
             }
-            setShowModal(true);
 
-            setTimeout(() => {
-                navigate("/");
-            }, 2500);
+            // 🔹 Registro exitoso
+            setShowModal(true);
+            setTimeout(() => navigate("/"), 2500);
 
         } catch (error) {
             console.error("Error al registrar:", error);
@@ -84,36 +90,22 @@ export const RegisterForm = () => {
                 </div>
             )}
             <form className="form" onSubmit={handleSubmit}>
-                <p className="form-title">Registrarse</p>
+                <p className="form-title">{t("Registrarse")}</p>
 
                 <div className="input-container">
                     <input placeholder="Nombre de usuario" type="text" name="nombre" onChange={handleChange} />
                 </div>
                 <div className="input-container">
-                    <input placeholder="Ingrese su correo electrónico" type="email" name="correo" onChange={handleChange} />
+                    <input placeholder="Correo electrónico" type="email" name="correo" onChange={handleChange} />
                 </div>
                 <div className="input-container">
-                    <input 
-                        placeholder="Contraseña" 
-                        type="password" 
-                        name="password" 
-                        value={formData.password} 
-                        onChange={handleChange} 
-                    />
+                    <input placeholder="Contraseña" type="password" name="password" value={formData.password} onChange={handleChange} />
                 </div>
-
                 <div className="input-container">
-                    <input 
-                        placeholder="Confirmar contraseña" 
-                        type="password" 
-                        name="confirmPassword"
-                        value={formData.confirmPassword} 
-                        onChange={handleChange} 
-                    />
+                    <input placeholder="Confirmar contraseña" type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} />
                 </div>
-                
                 <div className="input-container">
-                    <input placeholder="Teléfono" type="number" name="telefono" onChange={handleChange} />
+                    <input placeholder="Teléfono" type="text" name="telefono" onChange={handleChange} />
                 </div>
                 <div className="input-container">
                     <input placeholder="País" type="text" name="pais" onChange={handleChange} />

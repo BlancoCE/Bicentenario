@@ -5,6 +5,8 @@ import { Button } from '../components/Button'
 import { Register } from '../pages/Register'
 import { ConfirmarCuenta } from '../pages/ConfirmarCuenta'
 import { Acceso } from '../pages/Acceso'
+import { Recuperacion } from '../pages/Recuperacion'
+import { ResetPassword } from '../pages/Reset'
 
 export const AppRouter = () => {
     return (
@@ -17,6 +19,8 @@ export const AppRouter = () => {
             <Route path='/button' element={<Button/>} />
             <Route path="/confirmar/:token" element={<ConfirmarCuenta />} />
             <Route path="/login" element={<Acceso/>}/>
+            <Route path="/recuperacion" element={<Recuperacion/>}/>
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
         </Routes>
     )
 }

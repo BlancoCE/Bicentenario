@@ -60,15 +60,15 @@ const sendConfirmationEmail = async (email, token) => {
 
 // 🔹 Ruta para registrar usuario
 app.post("/api/register", async (req, res) => {
-    const { nombre, correo, password } = req.body;
+    const { nombre, correo, password, telefono, pais, ciudad } = req.body;
     try {
         const salt = await bcrypt.genSalt(10);
         const contraseñaHasheada = await bcrypt.hash(password, salt);
 
         // 🔹 Insertar usuario en la base de datos con `is_verified = false`
         const newUser = await pool.query(      
-            "INSERT INTO users (name, email, password, is_verified) VALUES ($1, $2, $3, $4) RETURNING *",
-            [nombre, correo, contraseñaHasheada, false]
+            "INSERT INTO users (name, email, password, is_verified, telefono, pais, ciudad) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+            [nombre, correo, contraseñaHasheada, false, telefono, pais, ciudad]
         );
         
         // 🔹 Generar token de confirmación
@@ -171,6 +171,67 @@ app.get("/api/confirmar/:token", async (req, res) => {
         res.status(400).json({ error: "Token inválido o expirado." });
     }
 });
+
+app.post("/api/recover-password", async (req, res) => {
+    const { correo } = req.body;
+
+    try {
+
+        const user = await pool.query("SELECT id FROM users WHERE email = $1", [correo]);
+
+        if (user.rows.length === 0) {
+            return res.status(404).json({ error: "Correo no registrado." });
+        }
+
+        const token = jwt.sign({ id: user.rows[0].id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+        await pool.query("UPDATE users SET reset_token = $1 WHERE id = $2", [token, user.rows[0].id]);
+
+        const resetLink = `${process.env.FRONTEND_URL}/reset-password/${token}`;
+
+        await transporter.sendMail({
+            from: process.env.EMAIL_USER,
+            to: correo,
+            subject: "Recuperación de Contraseña",
+            html: `
+                <h2>Recuperación de Contraseña</h2>
+                <p>Haz clic en el siguiente enlace para restablecer tu contraseña:</p>
+                <a href="${resetLink}" style="background-color:#4CAF50; color:white; padding:10px 15px; text-decoration:none; border-radius:5px;">
+                    Restablecer Contraseña
+                </a>
+                <p>Este enlace expira en 1 hora.</p>`
+        });
+
+        res.json({ message: "Correo enviado con éxito." });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Error en el servidor." });
+    }
+});
+
+app.post("/api/reset-password", async (req, res) => {
+    const { token, password } = req.body;
+
+    try {
+        // Verificar el token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        // Hashear la nueva contraseña
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        // Actualizar la contraseña y eliminar el token
+        await pool.query("UPDATE users SET password = $1, reset_token = NULL WHERE id = $2", [hashedPassword, decoded.id]);
+
+        res.json({ message: "Contraseña actualizada correctamente." });
+
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({ error: "Token inválido o expirado." });
+    }
+});
+
 
 // 🔹 Iniciar el servidor
 const PORT = process.env.PORT || 5000;
