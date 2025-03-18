@@ -1,48 +1,77 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 .footer-container {
     width: 100%;
-    position: relative;
-    background-color: #02022b;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px 0;
+    background-color: rgb(203, 2, 2); /*#02022b;*/
+    font-family: "Open Sans", sans-serif;
 }
 
-/*
 .footer-content {
-    position: relative;
     width: 100%;
-    max-width: 1920px;
+    max-width: 1200px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    padding: 30px 0px;
 }
-*/
 
 .footer-image {
     width: 100%;
-    display: block;
-    
-}
-
-.footer-overlay {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    color: white;
-}
-
-.social-icons {
+    height: 100%;
     display: flex;
     justify-content: center;
-    gap: 15px;
-    font-size: 24px;
+    align-items: center;
 }
 
-.contact-info {
-    margin-top: 15px;
-    font-size: 14px;
+.footer-image img{
+    width: 220px;
+    height: 150px;
+}
+
+.social-icons h2{
+    color: #fff;
+    margin-bottom: 20px;
+    font-size: 20px;
 }
 
 .contact-info p {
-    margin: 5px 0;
+    color: #fff;
+    margin-bottom: 20px;
+    font-size: 15px;
+}
+
+.social-icons a{
+    display: inline-block;
+    text-decoration: none;
+    width: 30px;
+    height: 30px;
+    line-height: 35px;
+    color: #fff;
+    margin-right: 10px;
+    background-color:rgb(203, 2, 2); /*#02022b;*/
+    text-align: center;
+    transition: all 300ms ease;
+}
+
+.social-icons a:hover {
+    color: rgb(221, 145, 124);
+}
+
+.footer2 {
+    background-color: rgb(141, 12, 12); /*#0b0b42;*/
+    padding: 15px 10px;
+    text-align: center;
+    color: #fff;
+}
+
+.footer2 small{
+    font-size: 15px;
+}
+@media screen and (max-width:80px) {
+    .footer-content{
+        width: 90%;
+        grid-template-columns: repeat(1, 1fr);
+        gap: 30px;
+        padding: 35px 0px;
+    }
 }
