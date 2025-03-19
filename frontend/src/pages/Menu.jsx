@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import logo from '../assets/logo2.png'
 
 export const Menu = () => {
     const navigate = useNavigate();
@@ -27,25 +28,30 @@ export const Menu = () => {
 
     return (
         <nav className="menu">
+            <img src={logo} alt="Logo de la página" className="menu_logo" />
+            
             <Link to="/">{t("Inicio")}</Link>
-            <Link to="/contacto">{t("Contacto")}</Link>
-
+            
             {!isAuthenticated ? (
                 <>
                     <Link to="/register">{t("Registrarse")}</Link>
                     <Link to="/login">{t("Iniciar Sesión")}</Link>
                 </>
             ) : (
-                <button onClick={handleLogout} className="logout-button">
+                <>
+                    <Link to="/contacto">{t("Contacto")}</Link>
+                    <Link onClick={handleLogout} to="/">{t("Cerrar sesión")}</Link>
+                </>
+                /*<button onClick={handleLogout} className="logout-button">
                     {t("Cerrar sesión")}
-                </button>
+                </button>*/
             )}
 
             {/* Menú desplegable para idiomas */}
             <div className="language-dropdown">
-                <button onClick={() => setShowDropdown(!showDropdown)} className="dropdown-toggle">
-                    🌎 {t("Idioma")}
-                </button>
+                <button onClick={() => setShowDropdown(!showDropdown)}>
+                    {t("Idioma")}
+                </button> 
                 {showDropdown && (
                     <ul className="dropdown-menu">
                         <li onClick={() => changeLanguage("es")}>🇪🇸 Español</li>
@@ -55,6 +61,7 @@ export const Menu = () => {
                     </ul>
                 )}
             </div>
+            
         </nav>
     );
 };

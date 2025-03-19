@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 :root {
   color: rgba(0, 0, 0, 0.87);
   background-color: white;
@@ -6,7 +7,6 @@
 * {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
 .center {
@@ -16,35 +16,69 @@
   align-items: center;
 }
 
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 300px;
-  background: #dadadb;
-  padding: 40px;  
-  border-radius: 20px;
-}
-
 .menu {
-  background-color: rgb(13, 37, 67);
+  background-color: rgb(203, 2, 2); /*rgb(13, 37, 67);*/
   color: white;
   display: flex;
+  justify-content: center;
+}
+
+.menu_logo {
+  width: 150px;
+  height: 58px;
+  border-radius: 3px;
+  margin: 10px;
 }
 
 .menu a,
 .menu button {
   text-decoration: none;
   color: white;
-  padding: 15px 10px;
-  font-family: Arial;
+  padding: 20px 10px;
+  font-family: "Open Sans", sans-serif;
   background: none;
   border: none;
   cursor: pointer;
   font-size: 16px;
+  margin: 10px;
 }
 
 .menu a:hover,
 .menu button:hover {
-  background-color: rgb(124, 168, 221);
+  background-color: rgb(221, 145, 124); /*rgb(124, 168, 221);*/
+  border-radius: 5px;
+}
+
+/* Estilo del contenedor del menú de idiomas desplegable */
+.language-dropdown {
+  position: relative;
+  display: inline-block;
+}
+/* Lista desplegable oculta hasta que se active */
+.dropdown-menu {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background-color: white;
+  color: black;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  list-style: none;
+  padding: 10px 0;
+  width: 150px;
+  z-index: 10;
+  font-family: "Open Sans", sans-serif;
+}
+  
+/* Opciones dentro del menú */
+.dropdown-menu li {
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  border-radius: 5px;
+}
+  
+.dropdown-menu li:hover {
+  background-color: #b9b8bd;
 }

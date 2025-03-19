@@ -90,7 +90,7 @@ export const RegisterForm = () => {
                 </div>
             )}
             <form className="form" onSubmit={handleSubmit}>
-                <p className="form-title">{t("Registrarse")}</p>
+                <p className="form-title">{t("Bienvenido!")}</p>
 
                 <div className="input-container">
                     <input placeholder="Nombre de usuario" type="text" name="nombre" onChange={handleChange} />
