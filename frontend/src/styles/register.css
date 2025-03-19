@@ -36,7 +36,7 @@ main {
     position: relative;
 }
   
-.input-container input, .form button {
+.input-container input, select, .form button {
     outline: none;
     border: 1px solid #ff320e; /*#e5e7eb;*/
     margin: 8px 0;
@@ -50,6 +50,19 @@ main {
     line-height: 1.25rem;
     width: 275px;
     border-radius: 0.5rem;
+    color: #565252;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.input-container select {
+    background-color: #ffebdd; /*#fff;*/
+    padding: 1rem;
+    padding-right: 3rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    width: 340px;
+    border-radius: 0.5rem;
+    color: #565252;
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
   

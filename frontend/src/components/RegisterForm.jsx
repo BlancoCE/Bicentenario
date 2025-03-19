@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; 
 import ReCAPTCHA from "react-google-recaptcha";
 import "../styles/register.css";
@@ -16,15 +16,48 @@ export const RegisterForm = () => {
         password: "",
         confirmPassword: "",
         telefono: "",
+        genero: "",
         pais: "",
         ciudad: "",
     });
 
     const [errorMessage, setErrorMessage] = useState("");
     const [showModal, setShowModal] = useState(false);
+    const [paises, setPaises] = useState([]);
+    const [ciudades, setCiudades] = useState([]);
+
+    // Obtener la lista de paises al cargar la página
+    useEffect(() => {
+        fetch("https://restcountries.com/v3.1/all")
+            .then(response => response.json())
+            .then(data => {
+                const countryList = data.map(country => country.name.common).sort();
+                setPaises(countryList);                
+            })
+            .catch(error => console.error("Error al cargar los países", error));
+    }, []);
+
+    // Obtener ciudades basadas en el país seleccionado
+    useEffect(() => {
+        if(formData.pais) {
+            fetch(`https://countriesnow.space/api/v0.1/countries/cities`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ country: formData.pais })
+            })
+            .then(response => response.json())
+            .then(data => setCiudades(data.data || []))
+            .catch(error => console.error("Error al cargar ciudades:", error));
+        }
+    }, [formData.pais]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+    
+    const validarPassword = (password) => {
+        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        return regex.test(password);
     };
 
     const handleSubmit = async (e) => {
@@ -43,8 +76,18 @@ export const RegisterForm = () => {
             return;
         }
 
+        if (!validarPassword(formData.password)) {
+            setErrorMessage("La contraseña debe tener mínimo 8 caracteres, incluyendo una mayúscula, una minúscula, un número y un caracter especial.");
+            return;
+        }
+
         if (formData.password !== formData.confirmPassword) {
             setErrorMessage("Las contraseñas no coinciden.");
+            return;
+        }
+        
+        if (!formData.genero.trim()) {
+            setErrorMessage("Por favor, selecciona tu género.");
             return;
         }
 
@@ -108,10 +151,27 @@ export const RegisterForm = () => {
                     <input placeholder="Teléfono" type="text" name="telefono" onChange={handleChange} />
                 </div>
                 <div className="input-container">
-                    <input placeholder="País" type="text" name="pais" onChange={handleChange} />
+                    <select name="genero" className="styled-input" onChange={handleChange} value={formData.genero}>
+                        <option value="">Selecciona tu género</option>
+                        <option value="Masculino">Masculino</option>
+                        <option value="Femenino">Femenino</option>
+                    </select>
                 </div>
                 <div className="input-container">
-                    <input placeholder="Ciudad" type="text" name="ciudad" onChange={handleChange} />
+                    <select name="pais" onChange={handleChange} value={formData.pais}>
+                        <option>Selecciona un país</option>
+                        {paises.map((pais, index) => (
+                            <option key={index} value={pais}>{pais}</option>
+                        ))}
+                    </select>
+                </div>
+                <div className="input-container">                
+                    <select name="ciudad" onChange={handleChange} value={formData.ciudad} disabled={!formData.pais}>
+                        <option value="">Selecciona una ciudad</option>
+                        {ciudades.map((ciudad, index) => (
+                            <option key={index} value={ciudad}>{ciudad}</option>
+                        ))}
+                    </select>
                 </div>
 
                 <div className="ContainerCaptcha">
