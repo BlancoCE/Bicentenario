@@ -4,11 +4,23 @@ import ReCAPTCHA from "react-google-recaptcha";
 import "../styles/register.css";
 import "../styles/exito.css";
 import { useTranslation } from "react-i18next";
+import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 export const RegisterForm = () => {
     const captcha = useRef(null);
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const [passwordVisibility, setPasswordVisibility] = useState({
+        password: false,
+        confirmPassword: false,
+    });
+
+    const togglePasswordVisibility = (fieldName) => {
+        setPasswordVisibility({
+            ...passwordVisibility,
+            [fieldName]: !passwordVisibility[fieldName],
+        });
+    };
     
     const [formData, setFormData] = useState({
         nombre: "",
@@ -142,10 +154,34 @@ export const RegisterForm = () => {
                     <input placeholder="Correo electrónico" type="email" name="correo" onChange={handleChange} />
                 </div>
                 <div className="input-container">
-                    <input placeholder="Contraseña" type="password" name="password" value={formData.password} onChange={handleChange} />
+                    <input 
+                        placeholder="Contraseña" 
+                        type={passwordVisibility.password ? "text" : "password"} 
+                        name="password" 
+                        value={formData.password} 
+                        onChange={handleChange} 
+                    />
+                    <span 
+                        className="password-toggle" 
+                        onClick={() => togglePasswordVisibility("password")}
+                    >
+                        {passwordVisibility.password ? <FiEyeOff /> : <FiEye />}
+                    </span>
                 </div>
                 <div className="input-container">
-                    <input placeholder="Confirmar contraseña" type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} />
+                    <input 
+                        placeholder="Confirmar contraseña" 
+                        type={passwordVisibility.confirmPassword ? "text" : "password"} 
+                        name="confirmPassword" 
+                        value={formData.confirmPassword} 
+                        onChange={handleChange} 
+                    />
+                    <span 
+                        className="password-toggle" 
+                        onClick={() => togglePasswordVisibility("confirmPassword")}
+                    >
+                        {passwordVisibility.confirmPassword ? <FiEyeOff /> : <FiEye />}
+                    </span>
                 </div>
                 <div className="input-container">
                     <input placeholder="Teléfono" type="text" name="telefono" onChange={handleChange} />

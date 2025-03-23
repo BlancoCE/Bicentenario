@@ -50,7 +50,6 @@ main {
     line-height: 1.25rem;
     width: 275px;
     border-radius: 0.5rem;
-    color: #565252;
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
@@ -62,7 +61,6 @@ main {
     line-height: 1.25rem;
     width: 340px;
     border-radius: 0.5rem;
-    color: #565252;
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
   
@@ -81,6 +79,23 @@ main {
     color: #ffebdd;; /*#9CA3AF;*/
     width: 1rem;
     height: 1rem;
+}
+
+.password-toggle {
+    color: rgb(244, 240, 240); /* Establece el color del icono a negro */
+    cursor: pointer; /* Cambia el cursor a una mano al pasar por encima */
+    /* Asegúrate de que el elemento span tenga un tamaño y posición adecuados */
+    display: inline-block; /* o block, según tu diseño */
+    width: 24px; /* Ajusta según el tamaño del icono */
+    
+    text-align: center; /* Centra el icono horizontalmente */
+    vertical-align: middle; /* Centra el icono verticalmente */
+    
+}
+
+/* Opcional: Estilos adicionales para mejorar la apariencia */
+.password-toggle:hover {
+    opacity: 0.7; /* Reduce la opacidad al pasar el ratón */
 }
   
 .submit {
