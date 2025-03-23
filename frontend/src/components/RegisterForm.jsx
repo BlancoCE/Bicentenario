@@ -112,6 +112,7 @@ export const RegisterForm = () => {
                     correo: formData.correo,
                     password: formData.password,
                     telefono: formData.telefono,
+                    genero: formData.genero,
                     pais: formData.pais,
                     ciudad: formData.ciudad
                 }),
