@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 .footer-container {
     width: 100%;
-    background-color: rgb(203, 2, 2); /*#02022b;*/
+    background-color: #004d40; /*#02022b;*/
     font-family: "Open Sans", sans-serif;
 }
 
@@ -48,17 +48,17 @@
     line-height: 35px;
     color: #fff;
     margin-right: 10px;
-    background-color:rgb(203, 2, 2); /*#02022b;*/
+    background-color:#004d40; /*#02022b;*/
     text-align: center;
     transition: all 300ms ease;
 }
 
 .social-icons a:hover {
-    color: rgb(221, 145, 124);
+    color: #aad7dd;
 }
 
 .footer2 {
-    background-color: rgb(141, 12, 12); /*#0b0b42;*/
+    background-color: #013d33; /*#0b0b42;*/
     padding: 15px 10px;
     text-align: center;
     color: #fff;

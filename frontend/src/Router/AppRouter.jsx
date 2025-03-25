@@ -6,6 +6,9 @@ import { ConfirmarCuenta } from '../pages/ConfirmarCuenta'
 import { Acceso } from '../pages/Acceso'
 import { Recuperacion } from '../pages/Recuperacion'
 import { ResetPassword } from '../pages/Reset'
+import { Configuracion } from '../pages/Configuracion'
+import { Notificaciones } from '../pages/Notificaciones'
+import { MenuCuenta } from '../pages/MenuCuenta'
 
 export const AppRouter = () => {
     return (
@@ -19,6 +22,9 @@ export const AppRouter = () => {
             <Route path="/login" element={<Acceso/>}/>
             <Route path="/recuperacion" element={<Recuperacion/>}/>
             <Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route path='/menucuenta' element={<MenuCuenta/>}/>
+            <Route path="/configuracion" element={<Configuracion/>}/>
+            <Route path='/notificaciones' element={<Notificaciones/>}/>
         </Routes>
     )
 }

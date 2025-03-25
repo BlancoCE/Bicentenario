@@ -40,6 +40,7 @@ export const Menu = () => {
             ) : (
                 <>
                     <Link to="/contacto">{t("Contacto")}</Link>
+                    <Link to="/configuracion">{t("Configuración")}</Link>
                     <Link onClick={handleLogout} to="/">{t("Cerrar sesión")}</Link>
                 </>
                 /*<button onClick={handleLogout} className="logout-button">

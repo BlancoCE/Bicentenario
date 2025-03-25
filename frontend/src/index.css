@@ -17,7 +17,7 @@
 }
 
 .menu {
-  background-color: rgb(203, 2, 2); /*rgb(13, 37, 67);*/
+  background-color: #04594e; /*rgb(13, 37, 67);*/
   color: white;
   display: flex;
   justify-content: center;
@@ -45,7 +45,7 @@
 
 .menu a:hover,
 .menu button:hover {
-  background-color: rgb(221, 145, 124); /*rgb(124, 168, 221);*/
+  background-color: #74bcab; /*rgb(124, 168, 221);*/
   border-radius: 5px;
 }
 

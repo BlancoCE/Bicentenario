@@ -77,14 +77,14 @@ export const RegisterForm = () => {
         setErrorMessage("");
 
         // 🔹 Validaciones
-        if (!captcha.current.getValue()) {
-            setErrorMessage("Por favor, completa el CAPTCHA antes de continuar.");
-            return;
-        }
-
         if (!formData.nombre.trim() || !formData.correo.trim() || !formData.password.trim() ||
             !formData.pais.trim() || !formData.ciudad.trim() || !formData.telefono.trim()) {
             setErrorMessage("Todos los campos requeridos deben estar llenos.");
+            return;
+        }
+        
+        if (!captcha.current.getValue()) {
+            setErrorMessage("Por favor, completa el CAPTCHA antes de continuar.");
             return;
         }
 
