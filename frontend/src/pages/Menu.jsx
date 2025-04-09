@@ -31,7 +31,7 @@ export const Menu = () => {
             <img src={logo} alt="Logo de la página" className="menu_logo" />
             
             <Link to="/">{t("Inicio")}</Link>
-            
+            <Link to="/pruebas">{t("Pruebas")}</Link>
             {!isAuthenticated ? (
                 <>
                     <Link to="/register">{t("Registrarse")}</Link>

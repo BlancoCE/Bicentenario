@@ -4,7 +4,7 @@ const UserModel = require("../models/userModel");
 const { sendConfirmationEmail, sendPasswordResetEmail } = require("../services/emailService");
 
 const register = async (req, res) => {
-    const { nombre, correo, password, telefono, pais, ciudad } = req.body;
+    const { nombre, correo, password, telefono, pais, ciudad, genero } = req.body;
     try {
         const salt = await bcrypt.genSalt(10);
         const contraseñaHasheada = await bcrypt.hash(password, salt);
@@ -16,6 +16,7 @@ const register = async (req, res) => {
             telefono,
             pais,
             ciudad,
+            genero,
         });
 
         const token = generateToken({ id: newUser.id });
