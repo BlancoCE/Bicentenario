@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { EventCalendar } from "./calendar";
 import '../styles/pruebas.css';
 
 export const Dashboard = () => {
@@ -155,6 +156,21 @@ export const Dashboard = () => {
       console.error('Error actualizando evento:', error);
       alert('No se pudo actualizar el evento');
     }
+  };
+
+  const handleEventSelect = (event) => {
+    setSelectedEvent(event);
+    setShowModal(true);
+  };
+
+  const handleSlotSelect = (slotInfo) => {
+    setSelectedSlot({
+      start: slotInfo.start,
+      end: slotInfo.end,
+      fecha: format(slotInfo.start, 'yyyy-MM-dd'),
+      hora: format(slotInfo.start, 'HH:mm')
+    });
+    setShowModal(true);
   };
 
   // Función para cancelar la edición
@@ -543,7 +559,15 @@ export const Dashboard = () => {
             )}
           </div>
         )}
-
+      <div className="p-4">
+      <h2 className="text-xl font-bold mb-4">Calendario de Eventos</h2>
+      {error && <p className="text-red-500">{error}</p>}
+      <EventCalendar
+        events={events}
+        onEventSelect={handleEventSelect}
+        onSlotSelect={handleSlotSelect}
+      />
+    </div>
         {/* Otras secciones pueden agregarse aquí */}
       </main>
     </div>
