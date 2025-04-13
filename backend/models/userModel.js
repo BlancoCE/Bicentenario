@@ -1,13 +1,13 @@
 const pool = require("../config/db");
 
 class UserModel {
-    static async createUser({ name, email, password, telefono, pais, ciudad }) {
+    static async createUser({ name, email, password, telefono, pais, ciudad, genero }) {
         const query = `
-            INSERT INTO users (name, email, password, is_verified, telefono, pais, ciudad)
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            INSERT INTO users (name, email, password, is_verified, telefono, pais, ciudad, genero)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
             RETURNING *
         `;
-        const values = [name, email, password, false, telefono, pais, ciudad];
+        const values = [name, email, password, false, telefono, pais, ciudad, genero];
         const result = await pool.query(query, values);
         return result.rows[0];
     }
