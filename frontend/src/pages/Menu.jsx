@@ -31,7 +31,7 @@ export const Menu = () => {
             <img src={logo} alt="Logo de la página" className="menu_logo" />
             
             <Link to="/">{t("Inicio")}</Link>
-            
+            <Link to="/">{t("Cultura")}</Link>
             {!isAuthenticated ? (
                 <>
                     <Link to="/register">{t("Registrarse")}</Link>
@@ -40,6 +40,7 @@ export const Menu = () => {
             ) : (
                 <>
                     <Link to="/contacto">{t("Contacto")}</Link>
+                    <Link to="">{t("Agenda")}</Link>
                     <Link to="/configuracion">{t("Configuración")}</Link>
                     <Link onClick={handleLogout} to="/">{t("Cerrar sesión")}</Link>
                 </>

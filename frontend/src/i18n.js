@@ -12,6 +12,8 @@ const resources = {
       "Cerrar sesión": "Cerrar sesión",
       "Idioma": "Idioma",
       "Bienvenido": "Bienvenido a la página del Bicentenario",
+      "Agenda": "Agenda",
+      "Cultura": "Cultura",
     }
   },
   en: {
@@ -23,6 +25,7 @@ const resources = {
       "Cerrar sesión": "Logout",
       "Idioma": "Language",
       "Bienvenido": "Welcome to the Bicentennial page",
+      "Agenda": "Agenda2"
     }
   },
   ay: {
@@ -45,6 +48,7 @@ const resources = {
       "Cerrar sesión": "Lloqsisqa",
       "Idioma": "Simi",
       "Bienvenido": "Bicentenario p’anqata rimay",
+      "Agenda": "Kalindaryu",
     }
   }
 };

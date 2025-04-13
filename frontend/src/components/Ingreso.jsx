@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 import "../styles/register.css";
 
 export const Ingreso = () => {
@@ -8,6 +9,16 @@ export const Ingreso = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({ correo: "", password: "" });
     const [errorMessage, setErrorMessage] = useState("");
+    const [passwordVisibility, setPasswordVisibility] = useState({
+        password: false,
+    });
+
+    const togglePasswordVisibility = (fieldName) => {
+        setPasswordVisibility((prev) => ({
+            ...prev,
+            [fieldName]: !prev[fieldName],
+        }));
+    };
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -66,11 +77,17 @@ export const Ingreso = () => {
                 <div className="input-container">
                     <input 
                         placeholder="Introduce tu contraseña" 
-                        type="password" 
+                        type={passwordVisibility.password ? "text" : "password"} 
                         name="password" 
                         value={formData.password} 
                         onChange={handleChange} 
                     />
+                    <span 
+                        className="password-toggle" 
+                        onClick={() => togglePasswordVisibility("password")}
+                        >
+                    {passwordVisibility.password ? <FiEyeOff  color="#004d40"/> : <FiEye  color="#004d40"/>}
+                    </span>
                 </div>
 
                 <div className="ContainerCaptcha">

@@ -77,6 +77,7 @@ export const RegisterForm = () => {
         setErrorMessage("");
 
         // 🔹 Validaciones
+        // Aumentar la verificación de que no existan usuarios con los mismos datos
         if (!formData.nombre.trim() || !formData.correo.trim() || !formData.password.trim() ||
             !formData.pais.trim() || !formData.ciudad.trim() || !formData.telefono.trim()) {
             setErrorMessage("Todos los campos requeridos deben estar llenos.");
@@ -166,7 +167,7 @@ export const RegisterForm = () => {
                         className="password-toggle" 
                         onClick={() => togglePasswordVisibility("password")}
                     >
-                        {passwordVisibility.password ? <FiEyeOff /> : <FiEye />}
+                        {passwordVisibility.password ? <FiEyeOff  color="#004d40"/> : <FiEye  color="#004d40"/>}
                     </span>
                 </div>
                 <div className="input-container">
@@ -181,20 +182,20 @@ export const RegisterForm = () => {
                         className="password-toggle" 
                         onClick={() => togglePasswordVisibility("confirmPassword")}
                     >
-                        {passwordVisibility.confirmPassword ? <FiEyeOff /> : <FiEye />}
+                        {passwordVisibility.confirmPassword ? <FiEyeOff  color="#004d40"/> : <FiEye  color="#004d40"/>}
                     </span>
                 </div>
                 <div className="input-container">
                     <input placeholder="Teléfono" type="text" name="telefono" onChange={handleChange} />
                 </div>
-                <div className="input-container">
-                    <select name="genero" className="styled-input" onChange={handleChange} value={formData.genero}>
+                <div className="input-container select-wrapper">
+                    <select name="genero"  onChange={handleChange} value={formData.genero}>
                         <option value="">Selecciona tu género</option>
                         <option value="Masculino">Masculino</option>
                         <option value="Femenino">Femenino</option>
                     </select>
                 </div>
-                <div className="input-container">
+                <div className="input-container select-wrapper">
                     <select name="pais" onChange={handleChange} value={formData.pais}>
                         <option>Selecciona un país</option>
                         {paises.map((pais, index) => (
@@ -202,7 +203,7 @@ export const RegisterForm = () => {
                         ))}
                     </select>
                 </div>
-                <div className="input-container">                
+                <div className="input-container select-wrapper">                
                     <select name="ciudad" onChange={handleChange} value={formData.ciudad} disabled={!formData.pais}>
                         <option value="">Selecciona una ciudad</option>
                         {ciudades.map((ciudad, index) => (
