@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MenuCuenta } from './MenuCuenta'; 
 import '../styles/configuracion.css';
 import userLogo from '../assets/user-logo.png'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
+import { fetchWithAuth } from '../utils/api';
 
 export const Configuracion= () => {
     const [modalOpen, setModalOpen] = useState(false);
@@ -11,18 +12,48 @@ export const Configuracion= () => {
     const [editField, setEditField] = useState(null);
     const [editedValue, setEditedValue] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [userData, setUserData] = useState({
+        nombre: '',
+        correo: '',
+        contraseña: '**********',
+        telefono: '',
+        paisCiudad: '',
+    });
+
+    // En tu componente Configuracion.js
+useEffect(() => {
+    const obtenerPerfil = async () => {
+        try {
+            setLoading(true);
+            const data = await fetchWithAuth('http://localhost:5000/api/usuario/perfil');
+            
+            setUserData({
+                nombre: data.nombre || 'NOMBRE DE USUARIO',
+                correo: data.correo || 'ejemplo@gmail.com',
+                telefono: data.telefono || 'Sin teléfono',
+                pais: data.pais || 'Sin ubicación',
+                ciudad: data.ciudad || 'Sin ciudad',
+            });
+        } catch (err) {
+            setError(err.message);
+            if (err.message.includes('401')) {
+                // Redirigir a login si el token es inválido
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    obtenerPerfil();
+}, []);
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
-    
-    const [userData, setUserData] = useState({
-        nombre: 'NOMBRE DE USUARIO',
-        correo: 'ejemplo@gmail.com',
-        contraseña: '**********',
-        telefono: '87654321',
-        paisCiudad: 'Bolivia - La Paz',
-    });
     
     const openModal = (type) => {
         setModalType(type);
@@ -69,6 +100,8 @@ export const Configuracion= () => {
         closeModal();
         setEditField(modalType);
     };
+
+    
 
     return (
         <div className="profile-container">
@@ -172,7 +205,7 @@ export const Configuracion= () => {
                             </>
                         ) : (
                             <>
-                                <div className="field-value">{userData.paisCiudad}</div>
+                                <div className="field-value">{userData.ciudad}, {userData.pais}</div>
                                 <button className="edit-button" onClick={() => handleEdit('paisCiudad')}>Editar</button>
                             </>
                         )}

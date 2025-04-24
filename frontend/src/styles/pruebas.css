@@ -37,11 +37,12 @@
   padding: 0;
 }
 
+
 body {
   font-family: 'Open Sans', sans-serif;
-  background-color: var(--bg-light);
   color: var(--text-dark);
   line-height: 1.6;
+  height: 100vh;
 }
 
 /* Layout principal modificado */
@@ -55,17 +56,17 @@ body {
   min-height: 100vh;
 }
 
-/* Sidebar (nav) */
 .sidebar {
   grid-area: nav;
   background-color: var(--bg-sidebar);
   padding: 1.5rem;
   box-shadow: var(--shadow-md);
-  position: fixed;
-  width: 280px;
-  height: 100vh;
+  width: 290px;
+  height: 290vh;
   z-index: 100;
+  position: sticky;
 }
+
 
 .sidebar-header {
   padding: 1rem 0;
@@ -87,6 +88,7 @@ body {
   margin: 0;
   flex-grow: 1;
   overflow-y: auto;
+  height: 100vh;
 }
 
 .sidebar-nav li {
@@ -96,7 +98,7 @@ body {
 .sidebar-nav button {
   display: flex;
   align-items: center;
-  width: 100%;
+  width: 98%;
   padding: 0.75rem 1.25rem;
   background-color: transparent;
   color: var(--text-dark);
@@ -132,7 +134,7 @@ body {
 .main-content {
   grid-area: main;
   padding: 2rem 2.5rem;
-  background-color: var(--bg-light);
+  max-width: 1000px;
   display: flex;
   flex-direction: column;
 }
@@ -303,23 +305,6 @@ body {
   color: var(--text-muted);
 }
 
-/* Calendario de eventos */
-.calendar-container {
-  background-color: var(--bg-white);
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: var(--shadow-sm);
-  margin-bottom: 2rem;
-}
-
-.calendar-container h3 {
-  margin-top: 0;
-  margin-bottom: 1.5rem;
-  font-size: 1.25rem;
-  color: var(--primary-color);
-  text-align: center;
-  font-weight: 600;
-}
 
 /* Secciones CRUD mejoradas */
 .crud-section {
@@ -594,57 +579,6 @@ textarea.form-control {
   font-weight: 500;
 }
 
-/* Estilos específicos para el calendario */
-.rbc-calendar {
-  background: var(--bg-white);
-  border-radius: 8px;
-  box-shadow: var(--shadow-sm);
-  padding: 1rem;
-  height: 700px;
-}
-
-.rbc-toolbar {
-  margin-bottom: 1rem;
-}
-
-.rbc-toolbar button {
-  color: var(--primary-color);
-  border: 1px solid var(--primary-color);
-  background: none;
-  padding: 0.5rem 1rem;
-  margin: 0 0.25rem;
-  border-radius: 4px;
-  transition: var(--transition);
-}
-
-.rbc-toolbar button:hover {
-  background-color: var(--primary-light);
-}
-
-.rbc-toolbar button.rbc-active {
-  background-color: var(--primary-color);
-  color: var(--text-light);
-}
-
-.rbc-event {
-  background-color: var(--primary-color);
-  border: none;
-  border-radius: 4px;
-  padding: 2px 5px;
-  color: white;
-}
-
-.rbc-event-content {
-  font-size: 0.85rem;
-}
-
-.rbc-day-slot .rbc-event {
-  border-left: 4px solid var(--primary-color);
-}
-
-.rbc-today {
-  background-color: rgba(0, 77, 64, 0.05);
-}
 
 /* Estados de carga y error */
 .loading {
@@ -747,63 +681,6 @@ textarea.form-control {
   }
 }
 
-/* Calendario en la parte inferior */
-.calendar-container {
-  order: 99; /* Fuerza al calendario a aparecer al final */
-  background-color: var(--bg-white);
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: var(--shadow-sm);
-  margin-top: auto; /* Empuja el calendario hacia abajo */
-}
-
-.calendar-container h3 {
-  margin-top: 0;
-  margin-bottom: 1.5rem;
-  font-size: 1.25rem;
-  color: var(--primary-color);
-  text-align: center;
-  font-weight: 600;
-}
-
-/* Estilos del calendario */
-.rbc-calendar {
-  background: var(--bg-white);
-  border-radius: 8px;
-  height: 600px;
-}
-
-.rbc-toolbar {
-  margin-bottom: 1rem;
-}
-
-.rbc-toolbar button {
-  color: var(--primary-color);
-  border: 1px solid var(--primary-color);
-  background: none;
-  padding: 0.5rem 1rem;
-  margin: 0 0.25rem;
-  border-radius: 4px;
-  transition: var(--transition);
-}
-
-.rbc-toolbar button:hover {
-  background-color: var(--primary-light);
-}
-
-.rbc-toolbar button.rbc-active {
-  background-color: var(--primary-color);
-  color: var(--text-light);
-}
-
-.rbc-event {
-  background-color: var(--primary-color);
-  border: none;
-  border-radius: 4px;
-  padding: 2px 5px;
-  color: white;
-}
-
 /* Resto de estilos (tarjetas, tablas, etc.) */
 .stats-cards {
   display: grid;
@@ -890,5 +767,209 @@ textarea.form-control {
   
   .rbc-calendar {
     height: 400px;
+  }
+
+
+}
+
+/* Estilos para el modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* Estilos para los radio buttons */
+.form-check {
+  margin-bottom: 0.5rem;
+}
+
+.form-check-input {
+  margin-right: 0.5rem;
+}
+
+/* Responsive para los campos de fecha/hora */
+@media (max-width: 768px) {
+  .row.mb-3 {
+    flex-direction: column;
+  }
+  .col-md-6 {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+}
+
+/* Estilos para el modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* Estilos específicos para los radio buttons en fila */
+.modalidad-options {
+  display: flex;
+  gap: 20px; /* Espacio entre los radio buttons */
+  margin-top: 8px;
+}
+
+.form-check {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.form-check-input {
+  margin-right: 8px;
+  margin-top: 0;
+}
+
+/* Responsive para móviles */
+@media (max-width: 576px) {
+  .modalidad-options {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .row.mb-3 {
+    flex-direction: column;
+  }
+  
+  .col-md-6 {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+}
+
+/* Estilos para las miniaturas de eventos */
+.event-thumbnail {
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  transition: transform 0.2s;
+}
+
+.event-thumbnail:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+}
+/* Estilos para los campos de fecha y hora */
+.row.mb-3 {
+  align-items: flex-end;
+}
+
+.row.mb-3 .col-md-6 {
+  padding: 0 5px;
+}
+
+.row.mb-3 .col-6 {
+  padding: 0 3px;
+}
+
+.row.mb-3 label {
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+.row.mb-3 .form-control {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+  .row.mb-3 {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .row.mb-3 .col-md-6 {
+    width: 100%;
+    padding: 0;
+  }
+  
+  .row.mb-3 .col-6 {
+    padding: 0;
+  }
+  
+  .row.mb-3 .row {
+    margin-bottom: 0.5rem;
   }
 }

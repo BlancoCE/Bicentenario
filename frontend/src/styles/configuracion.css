@@ -51,7 +51,7 @@
 /* Columna 2 - Contenido del perfil */
 .profile-cont {
     max-width: 800px;
-    margin-left: 20px; /* Ajusta el margen izquierdo */
+    margin-left: 150px; /* Ajusta el margen izquierdo */
     padding: 20px;
     flex-grow: 1; /* Permite que el contenido ocupe el espacio restante */
 }

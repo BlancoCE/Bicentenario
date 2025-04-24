@@ -1,73 +1,56 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
-import format from 'date-fns/format';
-import parse from 'date-fns/parse';
-import startOfWeek from 'date-fns/startOfWeek';
-import getDay from 'date-fns/getDay';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { format, parse, startOfWeek, getDay, addMonths } from 'date-fns';
+import { es, enUS } from 'date-fns/locale';
 import { useTranslation } from 'react-i18next';
-import esLocale from 'date-fns/locale/es';
-import enUSLocale from 'date-fns/locale/en-US';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import '../styles/EventCalendar.css';
 
-const locales = {
-  es: esLocale,
-  en: enUSLocale,
-};
-
+const locales = { es, en: enUS };
 const localizer = dateFnsLocalizer({
   format,
   parse,
-  startOfWeek,
+  startOfWeek: (date) => startOfWeek(date, { weekStartsOn: 1 }),
   getDay,
   locales,
 });
 
-export const EventCalendar = ({ events, onEventSelect, onSlotSelect }) => {
+export const EventCalendar = ({ events = [], onEventSelect, onSlotSelect }) => {
   const { i18n } = useTranslation();
-  const [localEvents, setLocalEvents] = useState([]);
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentView, setCurrentView] = useState('month');
 
-  useEffect(() => {
-    const formattedEvents = events.map(event => {
-      const fechaHora = event.fecha_hora || `${event.fecha}T${event.hora}`;
-      const startDate = new Date(fechaHora);
-      const endDate = new Date(new Date(fechaHora).setHours(startDate.getHours() + 2));
+  const formattedEvents = useMemo(() => {
+    return events.map(event => {
+      const startDate = new Date(event.start);
+      const endDate = event.end ? new Date(event.end) : new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
+      
       return {
-        id: event.id_evento,
-        title: event.nombre,
+        ...event,
+        id: event.id || Math.random().toString(36).substr(2, 9),
+        title: event.title || 'Evento sin título',
         start: startDate,
         end: endDate,
-        desc: event.descripcion,
-        lugar: event.lugar,
-        tipo: event.tipo,
-        allDay: false,
+        desc: event.desc || '',
+        tipo: event.tipo || 'General',
+        allDay: event.allDay || false,
       };
     });
-    setLocalEvents(formattedEvents);
   }, [events]);
 
   const eventStyleGetter = (event) => {
-    let backgroundColor = '#3174ad';
-
-    switch (event.tipo) {
-      case 'Cultural':
-        backgroundColor = '#004d40';
-        break;
-      case 'Académico':
-        backgroundColor = '#5e35b1';
-        break;
-      case 'Deportivo':
-        backgroundColor = '#e65100';
-        break;
-      case 'Social':
-        backgroundColor = '#0277bd';
-        break;
-      default:
-        backgroundColor = '#3174ad';
-    }
+    const colors = {
+      Cultural: '#004d40',
+      Académico: '#5e35b1',
+      Academico: '#5e35b1',
+      Deportivo: '#e65100',
+      Social: '#0277bd',
+      General: '#3174ad'
+    };
 
     return {
       style: {
-        backgroundColor,
+        backgroundColor: colors[event.tipo] || colors.General,
         borderRadius: '4px',
         opacity: 0.8,
         color: 'white',
@@ -77,33 +60,109 @@ export const EventCalendar = ({ events, onEventSelect, onSlotSelect }) => {
     };
   };
 
+  const handleNavigate = (newDate, view) => {
+    setCurrentDate(newDate);
+    if (view) {
+      setCurrentView(view);
+    }
+  };
+
+  const CustomToolbar = ({ label }) => {
+    return (
+      <div className="rbc-toolbar">
+        <div className="rbc-btn-group">
+          <button 
+            type="button" 
+            onClick={() => handleNavigate(addMonths(currentDate, -1))} 
+            className="rbc-nav-button"
+          >
+            ◄ Anterior
+          </button>
+          <button 
+            type="button" 
+            onClick={() => handleNavigate(new Date())} 
+            className="rbc-today-button"
+          >
+            Hoy
+          </button>
+          <button 
+            type="button" 
+            onClick={() => handleNavigate(addMonths(currentDate, 1))} 
+            className="rbc-nav-button"
+          >
+            Siguiente ►
+          </button>
+        </div>
+
+        <span className="rbc-toolbar-label">{label}</span>
+
+        <div className="rbc-btn-group">
+          <button 
+            type="button" 
+            onClick={() => handleNavigate(currentDate, 'month')} 
+            className={`rbc-view-button ${currentView === 'month' ? 'rbc-active' : ''}`}
+          >
+            Mes
+          </button>
+          <button 
+            type="button" 
+            onClick={() => handleNavigate(currentDate, 'week')} 
+            className={`rbc-view-button ${currentView === 'week' ? 'rbc-active' : ''}`}
+          >
+            Semana
+          </button>
+          <button 
+            type="button" 
+            onClick={() => handleNavigate(currentDate, 'day')} 
+            className={`rbc-view-button ${currentView === 'day' ? 'rbc-active' : ''}`}
+          >
+            Día
+          </button>
+          <button 
+            type="button" 
+            onClick={() => handleNavigate(currentDate, 'agenda')} 
+            className={`rbc-view-button ${currentView === 'agenda' ? 'rbc-active' : ''}`}
+          >
+            Agenda
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <div style={{ height: '700px', marginTop: '20px' }}>
+    <div className="calendar-container">
       <Calendar
-  localizer={localizer}
-  events={localEvents}
-  startAccessor="start"
-  endAccessor="end"
-  style={{ height: '100%' }}
-  onSelectEvent={onEventSelect}
-  onSelectSlot={onSlotSelect}
-  selectable={true}
-  eventPropGetter={eventStyleGetter}
-  messages={{
-    today: 'Hoy',
-    previous: 'Anterior',
-    next: 'Siguiente',
-    month: 'Mes',
-    week: 'Semana',
-    day: 'Día',
-    agenda: 'Agenda',
-    date: 'Fecha',
-    time: 'Hora',
-    event: 'Evento',
-    noEventsInRange: 'No hay eventos en este rango.',
-  }}
-  culture={i18n.language}
-/>
+        localizer={localizer}
+        events={formattedEvents}
+        startAccessor="start"
+        endAccessor="end"
+        onSelectEvent={onEventSelect}
+        onSelectSlot={onSlotSelect}
+        selectable={true}
+        eventPropGetter={eventStyleGetter}
+        onNavigate={handleNavigate}
+        onView={handleNavigate}
+        view={currentView}
+        date={currentDate}
+        culture={i18n.language}
+        messages={{
+          today: 'Hoy',
+          previous: '◄',
+          next: '►',
+          month: 'Mes',
+          week: 'Semana',
+          day: 'Día',
+          agenda: 'Agenda',
+          date: 'Fecha',
+          time: 'Hora',
+          event: 'Evento',
+          noEventsInRange: 'No hay eventos en este período.',
+        }}
+        components={{
+          toolbar: CustomToolbar
+        }}
+      />
     </div>
   );
 };

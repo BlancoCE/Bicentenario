@@ -1,0 +1,15 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .app-container {
+    min-height: 100vh; /* altura mínima de toda la pantalla */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .content-wrap {
+    flex: 1; /* hace que el contenido principal crezca */
+  }
