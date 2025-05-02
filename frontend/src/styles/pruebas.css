@@ -134,7 +134,7 @@ body {
 .main-content {
   grid-area: main;
   padding: 2rem 2.5rem;
-  max-width: 1000px;
+  max-width: 900px;
   display: flex;
   flex-direction: column;
 }

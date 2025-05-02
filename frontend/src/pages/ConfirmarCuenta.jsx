@@ -28,7 +28,7 @@ export const ConfirmarCuenta = () => {
 
     return (
         <div className="confirmacion-container">
-            <h2>{mensaje} Esto se devuelve</h2>
+            <h2>{mensaje}</h2>
         </div>
     );
 };

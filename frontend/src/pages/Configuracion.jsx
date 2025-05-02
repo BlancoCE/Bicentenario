@@ -28,7 +28,6 @@ useEffect(() => {
         try {
             setLoading(true);
             const data = await fetchWithAuth('http://localhost:5000/api/usuario/perfil');
-            
             setUserData({
                 nombre: data.nombre || 'NOMBRE DE USUARIO',
                 correo: data.correo || 'ejemplo@gmail.com',

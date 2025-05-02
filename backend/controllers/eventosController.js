@@ -108,6 +108,11 @@ const putevento = async (req, res) => {
   try {
     const { id } = req.params;
     const { nombre, fecha, descripcion, tipo } = req.body;
+ /*   const { 
+      nombre, enlace, fecha, descripcion, tipo, ubicacion, 
+      hora, modalidad, imagen, fecha2, hora2, ubicacion2, 
+      numero, expositor 
+    } = req.body;*/
     const result = await pool.query(
       "UPDATE Eventos SET nombre = $1, fecha = $2, descripcion = $3, tipo = $4 WHERE id_evento = $5 RETURNING *",
       [nombre, fecha, descripcion, tipo, id]

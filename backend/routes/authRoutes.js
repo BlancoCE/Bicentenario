@@ -1,7 +1,7 @@
 const express = require("express");
 const { register, login, confirmAccount, recoverPassword, resetPassword } = require("../controllers/authController");
 const {geteventos, geteventoe, postevento, putevento, deleteevento, getexpositores, getpatrocinadores} = require("../controllers/eventosController");
-const {getperfil} = require("../controllers/usuarioController");
+const {getperfil, getusuarios, getrol} = require("../controllers/usuarioController");
 const router = express.Router();
 
 router.post("/register", register);
@@ -17,5 +17,7 @@ router.delete("/eventos/:id", deleteevento);
 router.get("/usuario/perfil", getperfil);
 router.get("/expositores",getexpositores);
 router.get("/patrocinadores",getpatrocinadores);
+router.get("/usuarios",getusuarios);
+router.get("/rol",getrol);
 
 module.exports = router;

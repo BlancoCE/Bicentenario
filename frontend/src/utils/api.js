@@ -24,6 +24,7 @@ export const fetchWithAuth = async (url, options = {}) => {
 
         // Manejo de respuestas no exitosas
         if (!response.ok) {
+            
             let errorData;
             try {
                 errorData = await response.json();
@@ -32,12 +33,10 @@ export const fetchWithAuth = async (url, options = {}) => {
             }
             throw new Error(errorData.message || `Error ${response.status}: ${response.statusText}`);
         }
-
         // Manejo de respuestas sin contenido (204 No Content)
         if (response.status === 204) {
             return null;
         }
-
         return response.json();
     } catch (error) {
         console.error('Error en fetchWithAuth:', error);

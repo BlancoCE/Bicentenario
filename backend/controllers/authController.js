@@ -6,6 +6,12 @@ const { sendConfirmationEmail, sendPasswordResetEmail } = require("../services/e
 const register = async (req, res) => {
     const { nombre, correo, password, telefono, pais, ciudad, genero } = req.body;
     try {
+        // Verificar si el correo ya está registrado
+        const existingUser = await UserModel.findUserByEmail(correo);
+        if (existingUser) {
+            return res.status(400).json({ error: "El correo electrónico ya está registrado." });
+        }
+
         const salt = await bcrypt.genSalt(10);
         const contraseñaHasheada = await bcrypt.hash(password, salt);
 
@@ -19,16 +25,24 @@ const register = async (req, res) => {
             genero,
         });
 
-        const token = generateToken({ id: newUser.id });
+        const token = generateToken({ id: newUser.id_usuario });
         await sendConfirmationEmail(correo, token);
 
         res.status(201).json({ 
+            success: true,
             message: "Usuario registrado con éxito. Revisa tu correo para confirmar la cuenta.", 
-            usuario: newUser 
+            usuario: {
+                id: newUser.id_usuario,
+                nombre: newUser.nombre,
+                email: newUser.email
+            }
         });
     } catch (error) {
         console.error("Error en el registro:", error.message);
-        res.status(500).json({ error: "Error en el servidor." });
+        res.status(500).json({ 
+            success: false,
+            error: "Error en el servidor al registrar el usuario." 
+        });
     }
 };
 
@@ -38,23 +52,41 @@ const login = async (req, res) => {
         const user = await UserModel.findUserByEmail(correo);
 
         if (!user) {
-            return res.status(400).json({ error: "Correo o contraseña incorrectos." });
+            return res.status(400).json({ 
+                success: false,
+                error: "Correo o contraseña incorrectos." 
+            });
         }
-
-        const isValidPassword = await bcrypt.compare(password, user.password);
+        const isValidPassword = await bcrypt.compare(password, user.contrasena);    
         if (!isValidPassword) {
-            return res.status(400).json({ error: "Correo o contraseña incorrectos." });
+            return res.status(400).json({ 
+                success: false,
+                error: "Correo o contraseña incorrectos." 
+            });
         }
-
-        if (!user.is_verified) {
-            return res.status(400).json({ error: "Cuenta no verificada. Revisa tu correo." });
+        if (!user.verificado) {
+            return res.status(403).json({ 
+                success: false,
+                error: "Cuenta no verificada. Revisa tu correo electrónico para confirmar tu cuenta." 
+            });
         }
-
-        const token = generateToken({ id: user.id });
-        res.json({ message: "Inicio de sesión exitoso", token });
+        const token = generateToken({ id: user.id_usuario });
+        res.json({ 
+            success: true,
+            message: "Inicio de sesión exitoso", 
+            token,
+            user: {
+                id: user.id_usuario,
+                nombre: user.nombre,
+                email: user.email
+            }
+        });
     } catch (error) {
         console.error("Error en el login:", error.message);
-        res.status(500).json({ error: "Error en el servidor." });
+        res.status(500).json({ 
+            success: false,
+            error: "Error en el servidor al iniciar sesión." 
+        });
     }
 };
 
@@ -62,11 +94,52 @@ const confirmAccount = async (req, res) => {
     const { token } = req.params;
     try {
         const decoded = verifyToken(token);
-        await UserModel.updateUserVerification(decoded.id);
-        res.json({ message: "Cuenta activada correctamente." });
+        const user = await UserModel.findUserById(decoded.id);
+        
+        if (!user) {
+            return res.status(404).json({ 
+                success: false,
+                error: "Usuario no encontrado." 
+            });
+        }
+        if (user.verificado) {
+            return res.status(200).json({ 
+                success: true,
+                message: "La cuenta ya estaba verificada." 
+            });
+        }
+        const updatedUser = await UserModel.updateUserVerification(decoded.id);
+        
+        res.json({ 
+            success: true,
+            message: "Cuenta activada correctamente. Ya puedes iniciar sesión.",
+            user: {
+                id: updatedUser.id_usuario,
+                email: updatedUser.email
+            }
+        });
+        
     } catch (error) {
         console.error("Error al activar la cuenta:", error.message);
-        res.status(400).json({ error: "Token inválido o expirado." });
+        
+        if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ 
+                success: false,
+                error: "El enlace de confirmación ha expirado. Solicita uno nuevo." 
+            });
+        }
+        
+        if (error.name === 'JsonWebTokenError') {
+            return res.status(400).json({ 
+                success: false,
+                error: "Token de confirmación inválido." 
+            });
+        }
+        
+        res.status(500).json({ 
+            success: false,
+            error: "Error en el servidor al activar la cuenta." 
+        });
     }
 };
 
@@ -76,17 +149,26 @@ const recoverPassword = async (req, res) => {
         const user = await UserModel.findUserByEmail(correo);
 
         if (!user) {
-            return res.status(404).json({ error: "Correo no registrado." });
+            return res.status(404).json({ 
+                success: false,
+                error: "Correo no registrado." 
+            });
         }
 
-        const token = generateToken({ id: user.id }, "1h");
-        await UserModel.updateUserResetToken(user.id, token);
+        const token = generateToken({ id: user.id_usuario }, "1h");
+        await UserModel.updateUserResetToken(user.id_usuario, token);
         await sendPasswordResetEmail(correo, token);
 
-        res.json({ message: "Correo enviado con éxito." });
+        res.json({ 
+            success: true,
+            message: "Correo enviado con éxito. Revisa tu bandeja de entrada." 
+        });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Error en el servidor." });
+        console.error("Error en recuperación de contraseña:", error);
+        res.status(500).json({ 
+            success: false,
+            error: "Error en el servidor al procesar la solicitud." 
+        });
     }
 };
 
@@ -96,12 +178,38 @@ const resetPassword = async (req, res) => {
         const decoded = verifyToken(token);
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
-        await UserModel.updateUserPassword(decoded.id, hashedPassword);
-        res.json({ message: "Contraseña actualizada correctamente." });
+        
+        const updatedUser = await UserModel.updateUserPassword(decoded.id, hashedPassword);
+        
+        res.json({ 
+            success: true,
+            message: "Contraseña actualizada correctamente.",
+            user: {
+                id: updatedUser.id_usuario,
+                email: updatedUser.email
+            }
+        });
     } catch (error) {
-        console.error(error);
-        res.status(400).json({ error: "Token inválido o expirado." });
+        console.error("Error al restablecer contraseña:", error);
+        
+        if (error.name === 'TokenExpiredError' || error.name === 'JsonWebTokenError') {
+            return res.status(401).json({ 
+                success: false,
+                error: "El enlace ha expirado o es inválido. Solicita uno nuevo." 
+            });
+        }
+        
+        res.status(500).json({ 
+            success: false,
+            error: "Error en el servidor al restablecer la contraseña." 
+        });
     }
 };
 
-module.exports = { register, login, confirmAccount, recoverPassword, resetPassword };
+module.exports = { 
+    register, 
+    login, 
+    confirmAccount, 
+    recoverPassword, 
+    resetPassword 
+};

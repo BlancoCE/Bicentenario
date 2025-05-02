@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/pruebas.css';
 import { Eventos } from './eventos';
+import { Usuarios } from './Usuarios';
+import { fetchWithAuth } from '../utils/api';
 
 export const Dashboard = () => {
-  const [userRole, setUserRole] = useState('admin');
+  const [userRole, setUserRole] = useState('ADMINISTRADOR');
   const [activeSection, setActiveSection] = useState('dashboard');
   const [stats, setStats] = useState({
     users: 0,
@@ -12,60 +14,13 @@ export const Dashboard = () => {
     comments: 0,
     resources: 0
   });
-  const [events, setEvents] = useState([]);
-  const [expositores, setExpositores] = useState([]);
-  const [patrocinadores, setPatrocinadores] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingEventId, setEditingEventId] = useState(null);
   const [currentEvent, setCurrentEvent] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
-  const [newEvent, setNewEvent] = useState({
-    nombre: '',
-    fecha: '',
-    fecha2: '',
-    hora: '',
-    hora2: '',
-    modalidad: '',
-    ubicacion: '',
-    ubicacion2: '',
-    enlace: '',
-    tipo: '',
-    descripcion: '',
-    numero: '',
-    imagen: '',
-    expositor: '',
-    patrocinador: '',
-  });
 
-  // Función para obtener eventos desde la API
-  const fetchEvents = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/api/eventos');
-      if (!response.ok) {
-        throw new Error('Error al obtener los eventos');
-      }
-      const data = await response.json();
-      setEvents(data);
-
-      const response2 = await fetch('http://localhost:5000/api/expositores');
-      if (!response2.ok) {
-        throw new Error('Error al obtener los expositores');
-      }
-      const data2 = await response2.json();
-      setExpositores(data2);
-
-      const response3 = await fetch('http://localhost:5000/api/patrocinadores');
-      if (!response3.ok) {
-        throw new Error('Error al obtener los expositores');
-      }
-      const data3 = await response3.json();
-      setPatrocinadores(data3);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
 
   // Función para obtener un evento específico por ID
   const fetchEventById = async (id) => {
@@ -82,6 +37,18 @@ export const Dashboard = () => {
     }
   };
 
+  const fetchUserRole = async () => {
+    try {
+      setLoading(true);
+      const data = await fetchWithAuth(`http://localhost:5000/api/rol`);
+      setUserRole(data); // Asume que quieres el primer rol
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Simular carga de datos
   useEffect(() => {
     const fetchData = async () => {
@@ -94,9 +61,6 @@ export const Dashboard = () => {
           resources: 0
         });
 
-        // Obtener eventos reales desde la API
-        await fetchEvents();
-
 
         setLoading(false);
       } catch (error) {
@@ -107,6 +71,7 @@ export const Dashboard = () => {
     };
 
     fetchData();
+    fetchUserRole();
   }, []);
 
   // Cuando se cambia el evento a editar
@@ -127,7 +92,7 @@ export const Dashboard = () => {
   };
 
   const handleLogout = () => {
-    navigate('/login');
+    navigate('/');
   };
 
   const renderStars = (rating) => {
@@ -160,7 +125,7 @@ export const Dashboard = () => {
             </button>
           </li>
 
-          {(userRole === 'admin' || userRole === 'organizador') && (
+          {(userRole.rol === 'ADMINISTRADOR' || userRole.rol === 'organizador') && (
             <li className={activeSection === 'eventos' ? 'active' : ''}>
               <button onClick={() => handleSectionChange('eventos')}>
                 <i className="bi bi-calendar-event"></i> Eventos
@@ -168,7 +133,7 @@ export const Dashboard = () => {
             </li>
           )}
 
-          {userRole === 'admin' && (
+          {userRole.rol === 'ADMINISTRADOR' && (
             <>
               <li className={activeSection === 'usuarios' ? 'active' : ''}>
                 <button onClick={() => handleSectionChange('usuarios')}>
@@ -243,6 +208,8 @@ export const Dashboard = () => {
         )}
 
         {activeSection === 'eventos' && (<Eventos/>
+        )}
+        {activeSection === 'usuarios' && (<Usuarios/>
         )}
         {/* Otras secciones pueden agregarse aquí */}
       </main >

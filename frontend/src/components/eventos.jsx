@@ -106,10 +106,19 @@ export const Eventos = () => {
     };
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setCurrentEvent(prev => ({
-            ...prev,
-            [name]: value
-        }));
+
+        // Si es un campo de fecha/hora, asegurarse de mantener el formato correcto
+        if (name === 'fecha' || name === 'fecha2') {
+            setCurrentEvent(prev => ({
+                ...prev,
+                [name]: value ? new Date(value).toISOString().split('T')[0] : ''
+            }));
+        } else {
+            setCurrentEvent(prev => ({
+                ...prev,
+                [name]: value
+            }));
+        }
     };
     const cancelarEdicion = () => {
         setIsEditing(false);
@@ -358,13 +367,50 @@ export const Eventos = () => {
                                 />
                             </div>
                             <div className="mb-3">
-                                <label htmlFor="edit-fecha" className="form-label">Fecha</label>
+                                <label htmlFor="edit-fecha" className="form-label">Fecha Inicio</label>
                                 <input
                                     type="date"
                                     className="form-control"
                                     id="edit-fecha"
                                     name="fecha"
-                                    value={currentEvent.fecha ? currentEvent.fecha.substring(0, 10) : ''}
+                                    value={currentEvent.fecha ? format(new Date(currentEvent.fecha), 'yyyy-MM-dd') : ''}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </div>
+                            <div className="mb-3">
+                                <label htmlFor="edit-fecha2" className="form-label">Fecha Final</label>
+                                <input
+                                    type="date"
+                                    className="form-control"
+                                    id="edit-fecha2"
+                                    name="fecha2"
+                                    value={currentEvent.fecha_final ? format(new Date(currentEvent.fecha_final), 'yyyy-MM-dd') : ''}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </div>
+
+                            <div className="mb-3">
+                                <label htmlFor="edit-hora" className="form-label">Hora Inicio</label>
+                                <input
+                                    type="time"
+                                    className="form-control"
+                                    id="edit-hora"
+                                    name="hora"
+                                    value={currentEvent.hora ? currentEvent.hora.substring(0, 5) : ''}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </div>
+                            <div className="mb-3">
+                                <label htmlFor="edit-hora2" className="form-label">Hora Final</label>
+                                <input
+                                    type="time"
+                                    className="form-control"
+                                    id="edit-hora2"
+                                    name="hora2"
+                                    value={currentEvent.hora_final ? currentEvent.hora_final.substring(0, 5) : ''}
                                     onChange={handleInputChange}
                                     required
                                 />
@@ -400,6 +446,40 @@ export const Eventos = () => {
                                     onChange={handleInputChange}
                                 ></textarea>
                             </div>
+                            <div className="mb-3">
+                                <label className="form-label">Modalidad</label>
+                                <div className="modalidad-options">
+                                    <div className="form-check">
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            name="modalidad"
+                                            id="presencial"
+                                            value="presencial"
+                                            checked={newEvent.modalidad === 'presencial'}
+                                            onChange={() => setNewEvent({ ...newEvent, modalidad: 'presencial' })}
+                                            required
+                                        />
+                                        <label className="form-check-label" htmlFor="presencial">
+                                            Presencial
+                                        </label>
+                                    </div>
+                                    <div className="form-check">
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            name="modalidad"
+                                            id="virtual"
+                                            value="virtual"
+                                            checked={newEvent.modalidad === 'virtual'}
+                                            onChange={() => setNewEvent({ ...newEvent, modalidad: 'virtual' })}
+                                        />
+                                        <label className="form-check-label" htmlFor="virtual">
+                                            Virtual
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
 
                             <div className="mb-3">
                                 <label htmlFor="edit-ubicacion" className="form-label">Ubicación</label>
@@ -408,7 +488,7 @@ export const Eventos = () => {
                                     className="form-control"
                                     id="edit-ubicacion"
                                     name="ubicacion"
-                                    value={currentEvent.ubicacion || ''}
+                                    value={currentEvent.lugar || ''}
                                     onChange={handleInputChange}
                                 />
                             </div>
