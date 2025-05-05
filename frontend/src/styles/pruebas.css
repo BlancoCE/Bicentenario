@@ -132,8 +132,6 @@ body {
 
 /* Contenido principal */
 .main-content {
-  grid-area: main;
-  padding: 2rem 2.5rem;
   max-width: 900px;
   display: flex;
   flex-direction: column;
@@ -152,6 +150,7 @@ body {
   top: 0;
   z-index: 90;
   height: 80px;
+  width: 900px;
 }
 
 .main-header h1 {

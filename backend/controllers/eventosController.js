@@ -11,6 +11,16 @@ const geteventos = async (req, res) => {
   }
 };
 
+const get5eventos = async (req, res) => {
+  try {
+    const result = await pool.query("select * from eventos where fecha>=CURRENT_TIMESTAMP limit 5");
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error al obtener eventos:", error);
+    res.status(500).json({ error: "Error del servidor" });
+  }
+};
+
 const getexpositores = async (req, res) => {
   try {
     const result = await pool.query("SELECT nombre, id_expositor FROM Expositores ORDER BY NOMBRE");
@@ -168,4 +178,5 @@ module.exports = {
   deleteevento,
   getexpositores,
   getpatrocinadores,
+  get5eventos,
 };
