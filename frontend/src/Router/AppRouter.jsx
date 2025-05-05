@@ -15,14 +15,14 @@ import { Agente } from '../components/Agente'
 export const AppRouter = () => {
     return (
         <Routes>
-            <Route path='/' element={<Inicio/>}/>
-            <Route path='/register' element={<Register/>}/>
-            <Route path='/contacto' element={<Contacto/>}/>
+            <Route path='/' element={<Inicio />} />
+            <Route path='/register' element={<Register />} />
+            <Route path='/contacto' element={<Contacto />} />
             {/*<Route path='/*' element={<Navigate to='/'/>}/>*/}
-            <Route path='/*' element={<h1>Error 404</h1>}/>
+            <Route path='/*' element={<h1>Error 404</h1>} />
             <Route path="/confirmar/:token" element={<ConfirmarCuenta />} />
-            <Route path="/login" element={<Acceso/>}/>
-            <Route path="/recuperacion" element={<Recuperacion/>}/>
+            <Route path="/login" element={<Acceso />} />
+            <Route path="/recuperacion" element={<Recuperacion />} />
             <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route path='/menucuenta' element={<MenuCuenta/>}/>
             <Route path="/configuracion" element={<Configuracion/>}/>

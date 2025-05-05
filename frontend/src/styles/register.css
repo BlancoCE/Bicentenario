@@ -37,8 +37,21 @@ main {
     display: flex;
     align-items: center;
 }
+
+.input-container2 {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+  
   
 .input-container input, select, .form button {
+    outline: none;
+    border: 1px solid  #004d40; /*#e5e7eb;*/
+    margin: 8px 0;
+}
+
+.input-container2 input, select, .form button {
     outline: none;
     border: 1px solid  #004d40; /*#e5e7eb;*/
     margin: 8px 0;
@@ -56,6 +69,17 @@ main {
     box-sizing: border-box;
 }
 
+.input-container2 input {
+    background-color: #e0f7fa; /*#fff;*/
+    padding: 1rem;
+    width: 305px;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    flex-grow: 1;
+}
+
 .input-container select {
     background-color: #e0f7fa; /*#fff;*/
     padding: 1rem;
@@ -64,6 +88,16 @@ main {
     width: 308px;
     border-radius: 0.5rem;
     box-shadow: 0 1px 2px 0 rgba(83, 15, 15, 0.05);
+}
+
+.input-container2 select {
+    background-color: #e0f7fa; /*#fff;*/
+    padding: 1rem;
+    font-size: 0.700rem;
+    line-height: 1.25rem;
+    width: 338px;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
   
 .input-container span {

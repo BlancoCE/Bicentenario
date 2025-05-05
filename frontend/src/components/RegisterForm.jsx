@@ -68,7 +68,7 @@ export const RegisterForm = () => {
     };
     
     const validarPassword = (password) => {
-        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._])[A-Za-z\d@$!%*?&._]{8,}$/;
         return regex.test(password);
     };
 
@@ -150,14 +150,14 @@ export const RegisterForm = () => {
                 <p className="form-title">{t("Bienvenido!")}</p>
 
                 <div className="input-container">
-                    <input placeholder="Nombre de usuario" type="text" name="nombre" onChange={handleChange} />
+                    <input placeholder={t("Nombre")} type="text" name="nombre" onChange={handleChange} />
                 </div>
                 <div className="input-container">
-                    <input placeholder="Correo electrónico" type="email" name="correo" onChange={handleChange} />
+                    <input placeholder={t("Correo Electronico")} type="email" name="correo" onChange={handleChange} />
                 </div>
                 <div className="input-container">
                     <input 
-                        placeholder="Contraseña" 
+                        placeholder={t("Contraseña")}
                         type={passwordVisibility.password ? "text" : "password"} 
                         name="password" 
                         value={formData.password} 
@@ -172,7 +172,7 @@ export const RegisterForm = () => {
                 </div>
                 <div className="input-container">
                     <input 
-                        placeholder="Confirmar contraseña" 
+                        placeholder={t("Confirmar Contraseña")}
                         type={passwordVisibility.confirmPassword ? "text" : "password"} 
                         name="confirmPassword" 
                         value={formData.confirmPassword} 
@@ -186,7 +186,7 @@ export const RegisterForm = () => {
                     </span>
                 </div>
                 <div className="input-container">
-                    <input placeholder="Teléfono" type="text" name="telefono" onChange={handleChange} />
+                    <input placeholder={t("Telefono")} type="text" name="telefono" onChange={handleChange} />
                 </div>
                 <div className="input-container select-wrapper">
                     <select name="genero"  onChange={handleChange} value={formData.genero}>
@@ -205,7 +205,7 @@ export const RegisterForm = () => {
                 </div>
                 <div className="input-container select-wrapper">                
                     <select name="ciudad" onChange={handleChange} value={formData.ciudad} disabled={!formData.pais}>
-                        <option value="">Selecciona una ciudad</option>
+                        <option value="">{t("Selecciona una ciudad")}</option>
                         {ciudades.map((ciudad, index) => (
                             <option key={index} value={ciudad}>{ciudad}</option>
                         ))}
@@ -219,7 +219,7 @@ export const RegisterForm = () => {
                 {errorMessage && <p className="error-message">{errorMessage}</p>}
 
                 <button className="submit" type="submit">
-                    Crear Cuenta
+                    {t("Crear Cuenta")}
                 </button>
             </form>
         </main>

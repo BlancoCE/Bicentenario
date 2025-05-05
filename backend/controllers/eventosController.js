@@ -11,6 +11,26 @@ const geteventos = async (req, res) => {
   }
 };
 
+const getexpositores = async (req, res) => {
+  try {
+    const result = await pool.query("SELECT nombre, id_expositor FROM Expositores ORDER BY NOMBRE");
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error al obtener expositores:", error);
+    res.status(500).json({ error: "Error del servidor" });
+  }
+};
+
+const getpatrocinadores = async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM Patrocinadores");
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error al obtener patrocinadores:", error);
+    res.status(500).json({ error: "Error del servidor" });
+  }
+};
+
 // GET un solo evento por ID
 const geteventoe = async (req, res) => {
   try {
@@ -34,15 +54,48 @@ const geteventoe = async (req, res) => {
 // POST nuevo evento
 const postevento = async (req, res) => {
   try {
-    const { nombre, fecha, descripcion, tipo } = req.body;
-    if (!nombre || !fecha || !descripcion || !tipo) {
-      return res.status(400).json({ error: "Todos los campos son obligatorios" });
+    const { 
+      nombre, enlace, fecha, descripcion, tipo, ubicacion, 
+      hora, modalidad, imagen, fecha2, hora2, ubicacion2, 
+      numero, expositor 
+    } = req.body;
+    
+    // Validación de campos obligatorios
+    if (!nombre || !fecha || !hora || !modalidad) {
+      return res.status(400).json({ 
+        error: "Campos obligatorios: nombre, fecha, hora y modalidad" 
+      });
     }
 
-    const result = await pool.query(
-      "INSERT INTO Eventos (nombre, fecha, descripcion, tipo) VALUES ($1, $2, $3, $4) RETURNING *",
-      [nombre, fecha, descripcion, tipo]
-    );
+    // Determinar el lugar basado en la modalidad
+    const lugar = modalidad === 'presencial' ? ubicacion : enlace;
+    
+    // Preparar datos para la inserción
+    const eventData = [
+      nombre, fecha, descripcion, tipo, lugar, hora, 
+      modalidad, fecha2 || null, hora2 || null, numero || null
+    ];
+    
+    // Insertar evento en la base de datos
+    const eventQuery = `
+      INSERT INTO Eventos (
+        nombre, fecha, descripcion, tipo, lugar, hora, 
+        modalidad, fecha_final, hora_final, contacto
+      ) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
+      RETURNING *`;
+    
+    const result = await pool.query(eventQuery, eventData);
+    
+    // Si hay un expositor asociado, crear la relación en otra tabla
+  /*  if (expositor) {
+      await pool.query(
+        "INSERT INTO eventos_expositores (id_evento, id_expositor) VALUES ($1, $2)",
+        [result.rows[0].id_evento, expositor]
+      );
+    }*/
+    
+    // Devolver el evento creado
     res.status(201).json(result.rows[0]);
   } catch (error) {
     console.error("Error al añadir evento:", error);
@@ -55,6 +108,11 @@ const putevento = async (req, res) => {
   try {
     const { id } = req.params;
     const { nombre, fecha, descripcion, tipo } = req.body;
+ /*   const { 
+      nombre, enlace, fecha, descripcion, tipo, ubicacion, 
+      hora, modalidad, imagen, fecha2, hora2, ubicacion2, 
+      numero, expositor 
+    } = req.body;*/
     const result = await pool.query(
       "UPDATE Eventos SET nombre = $1, fecha = $2, descripcion = $3, tipo = $4 WHERE id_evento = $5 RETURNING *",
       [nombre, fecha, descripcion, tipo, id]
@@ -107,5 +165,7 @@ module.exports = {
   geteventoe,
   postevento,
   putevento,
-  deleteevento
+  deleteevento,
+  getexpositores,
+  getpatrocinadores,
 };
