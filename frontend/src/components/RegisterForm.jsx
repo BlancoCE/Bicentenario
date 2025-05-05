@@ -89,10 +89,10 @@ export const RegisterForm = () => {
             return;
         }
 
-        if (!validarPassword(formData.password)) {
+        {/*if (!validarPassword(formData.password)) {
             setErrorMessage("La contraseña debe tener mínimo 8 caracteres, incluyendo una mayúscula, una minúscula, un número y un caracter especial.");
             return;
-        }
+        }*/}
 
         if (formData.password !== formData.confirmPassword) {
             setErrorMessage("Las contraseñas no coinciden.");

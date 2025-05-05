@@ -32,6 +32,7 @@ export const Menu = () => {
             
             <Link to="/">{t("Inicio")}</Link>
             <Link to="/pruebas">{t("Pruebas")}</Link>
+            <Link to="/agente">Agente</Link>
             {!isAuthenticated ? (
                 <>
                     <Link to="/register">{t("Registrarse")}</Link>
