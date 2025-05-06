@@ -25,6 +25,14 @@ const resources = {
       "Selecciona un país": "Selecciona un país",
       "Selecciona una ciudad": "Selecciona una ciudad",
       "Crear Cuenta": "Crear Cuenta",
+      "eventos.titulo": "Eventos",
+      "eventos.buscar": "Buscar",
+      "eventos.todos_tipos": "Tipos",
+      "eventos.todas_modalidades": "Modalidad",
+      "eventos.mas_info": "Mas información",
+      "eventos.suscribirse": "Suscribirse",
+      "eventos.pasado": "Pasado",
+       
     }
   },
   en: {

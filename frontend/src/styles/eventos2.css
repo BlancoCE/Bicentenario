@@ -1,0 +1,41 @@
+/* Tablas mejoradas */
+.table-responsive {
+    overflow-x: auto;
+    border-radius: 6px;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+    max-width: 780px;
+  }
+  
+  .table th, .table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .table th {
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+  }
+  
+  .table tbody tr:nth-child(even) {
+    background-color: rgba(0, 77, 64, 0.03);
+  }
+  
+  .table tbody tr:hover {
+    background-color: rgba(0, 77, 64, 0.08);
+  }
+    /* Ancho específico para cada columna */
+    .table th:nth-child(1), .table td:nth-child(1) { width: 36%; } /* Usuario */
+    .table th:nth-child(2), .table td:nth-child(2) { width: 18%; } /* Nombre */
+    .table th:nth-child(3), .table td:nth-child(3) { width: 18%; } /* Email */
+    .table th:nth-child(4), .table td:nth-child(4) { width: 30%; } /* Teléfono */
