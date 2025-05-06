@@ -1,0 +1,173 @@
+/* Variables de color extraídas del CSS original */
+:root {
+    --primary-color: #004d40;
+    --primary-light: #e0f7fa;
+    --secondary-color: #04594e;
+    --accent-color: #74bcab;
+    --danger-color: #d32f2f;
+    --warning-color: #ffc107;
+    --success-color: #28a745;
+    --info-color: #17a2b8;
+    
+    /* Texto */
+    --text-dark: #333;
+    --text-light: #fff;
+    --text-muted: #6c757d;
+    
+    /* Fondos */
+    --bg-light: #f8f9fa;
+    --bg-white: #fff;
+    --bg-sidebar: #cce7ec;
+    
+    /* Bordes */
+    --border-color: #e5e7eb;
+    
+    /* Sombras */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    
+    /* Transiciones */
+    --transition: all 0.3s ease;
+  }
+  
+  /* Estilos principales para el componente de usuarios */
+  .usuarios-container {
+    margin-top: 20px;
+    width: 1000px;
+    margin-left: -50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centra los elementos hijos horizontalmente */
+  }
+  
+  /* Estilos para la alerta de error */
+  .alert {
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+    width: 100%; /* Ocupa todo el ancho disponible */
+    max-width: 1000px; /* Mismo ancho que la tabla */
+    text-align: center; /* Centra el texto */
+    box-sizing: border-box; /* Incluye padding en el ancho */
+  }
+  
+  .alert-danger {
+    background-color: #ffebee;
+    color: var(--danger-color);
+    border: 1px solid var(--danger-color);
+  }
+  
+  /* Tabla con ancho fijo */
+  .table-responsive {
+    border-radius: 6px;
+    box-shadow: var(--shadow-sm);
+    width: 1000px; /* Asegura el mismo ancho que el contenedor */
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.65rem;
+    /* Ancho fijo para la tabla */
+    table-layout: fixed;
+    width: 1000px; /* Ancho fijo para la tabla */
+  }
+  
+  .table th, .table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    /* Ajustes para manejar mejor el texto largo */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  /* Ancho específico para cada columna */
+  .table th:nth-child(1), .table td:nth-child(1) { width: 10%; } /* Usuario */
+  .table th:nth-child(2), .table td:nth-child(2) { width: 13%; } /* Nombre */
+  .table th:nth-child(3), .table td:nth-child(3) { width: 12%; } /* Email */
+  .table th:nth-child(4), .table td:nth-child(4) { width: 11%; } /* Teléfono */
+  .table th:nth-child(5), .table td:nth-child(5) { width: 10%; } /* Género */
+  .table th:nth-child(6), .table td:nth-child(6) { width: 10%; } /* Verificado */
+  .table th:nth-child(7), .table td:nth-child(7) { width: 15%; } /* Rol */
+  .table th:nth-child(8), .table td:nth-child(8) { width: 19%; } /* Acciones */
+  
+  .table th {
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.60rem;
+    letter-spacing: 0.5px;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    height: 10px;
+  }
+
+  .table td{
+    height: 10px;
+  }
+  
+  .table tbody tr:nth-child(even) {
+    background-color: rgba(0, 77, 64, 0.03);
+  }
+  
+  .table tbody tr:hover {
+    background-color: rgba(0, 77, 64, 0.08);
+  }
+  
+  /* Estilos para los controles de formulario */
+  select, option {
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--bg-white);
+    font-size: 0.6rem;
+    color: var(--text-dark);
+    width: 100%;
+  }
+  
+  select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(0, 77, 64, 0.2);
+    outline: none;
+  }
+  
+  select:disabled {
+    background-color: var(--bg-light);
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+  
+  /* Estado de carga */
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+    font-size: 1.25rem;
+    color: var(--text-muted);
+  }
+  
+  /* Mensaje cuando no hay datos */
+  .text-center {
+    text-align: center;
+  }
+  
+  /* Media queries para responsividad */
+  @media (max-width: 1200px) {
+    .table {
+      /* Mantenemos el ancho fijo pero permitimos scroll horizontal */
+      width: 1200px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+  }

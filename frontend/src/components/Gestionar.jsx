@@ -125,7 +125,7 @@ export const Dashboard = () => {
             </button>
           </li>
 
-          {(userRole.rol === 'ADMINISTRADOR' || userRole.rol === 'organizador') && (
+          {(userRole.rol === 'SUPERADMINISTRADOR' || userRole.rol === 'ADMINISTRADOR' || userRole.rol === 'organizador') && (
             <li className={activeSection === 'eventos' ? 'active' : ''}>
               <button onClick={() => handleSectionChange('eventos')}>
                 <i className="bi bi-calendar-event"></i> Eventos
@@ -133,7 +133,7 @@ export const Dashboard = () => {
             </li>
           )}
 
-          {userRole.rol === 'ADMINISTRADOR' && (
+          {(userRole.rol === 'SUPERADMINISTRADOR' || userRole.rol === 'ADMINISTRADOR') && (
             <>
               <li className={activeSection === 'usuarios' ? 'active' : ''}>
                 <button onClick={() => handleSectionChange('usuarios')}>

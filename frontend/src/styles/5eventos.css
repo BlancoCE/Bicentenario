@@ -1,0 +1,191 @@
+.event-carousel-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1rem;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .carousel-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 2rem;
+  }
+  
+  .event-carousel {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+    min-height: 450px; /* Altura mínima para mantener consistencia */
+  }
+  
+  .event-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    height: 100%;
+  }
+  
+  .event-image-container {
+    width: 100%;
+    height: 200px; /* Altura fija para la imagen */
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f5f5f5;
+  }
+  
+  .event-image {
+    width: auto;
+    height: 100%;
+    max-width: 100%;
+    object-fit: contain; /* Cambiado a contain para mostrar la imagen completa */
+  }
+  
+  .event-content {
+    padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .event-title {
+    margin-top: 0;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    height: 28px; /* Altura fija para el título */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .event-description-container {
+    position: relative;
+    height: 100px; /* Altura fija para el contenedor de descripción */
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+    flex-grow: 1;
+  }
+  
+  .event-description {
+    color: #666;
+    margin: 0;
+    overflow: hidden;
+    line-height: 1.5;
+  }
+  
+  .event-description.expanded {
+    max-height: 1000px;
+    overflow: auto;
+  }
+  
+  .read-more-button {
+    background: none;
+    border: none;
+    color: #3498db;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 0;
+    margin-top: 0.5rem;
+    text-align: left;
+  }
+  
+  .read-more-button:hover {
+    text-decoration: underline;
+  }
+  
+  .event-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: auto; /* Empuja los botones hacia abajo */
+  }
+  
+  .action-button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+  }
+  
+  .action-button.info {
+    background: #3498db;
+    color: white;
+  }
+  
+  .action-button.subscribe {
+    background: #2ecc71;
+    color: white;
+  }
+  
+  .action-button:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+  }
+  
+  .nav-button {
+    background: #34495e;
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .nav-button:hover {
+    background: #2c3e50;
+  }
+  
+  .carousel-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+  }
+  
+  .view-all-button {
+    background: #e74c3c;
+    color: white;
+    padding: 0.5rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .carousel-indicators {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #bdc3c7;
+    cursor: pointer;
+  }
+  
+  .indicator.active {
+    background: #3498db;
+  }
+  
+  .no-events {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+    height: 400px; /* Altura fija para mantener consistencia */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }

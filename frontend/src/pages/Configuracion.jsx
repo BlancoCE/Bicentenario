@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { MenuCuenta } from './MenuCuenta'; 
+import { MenuCuenta } from './MenuCuenta';
 import '../styles/configuracion.css';
 import userLogo from '../assets/user-logo.png'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
 import { fetchWithAuth } from '../utils/api';
 
-export const Configuracion= () => {
+export const Configuracion = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [modalType, setModalType] = useState(null);
     const [profilePhoto, setProfilePhoto] = useState(null);
@@ -23,37 +23,37 @@ export const Configuracion= () => {
     });
 
     // En tu componente Configuracion.js
-useEffect(() => {
-    const obtenerPerfil = async () => {
-        try {
-            setLoading(true);
-            const data = await fetchWithAuth('http://localhost:5000/api/usuario/perfil');
-            setUserData({
-                nombre: data.nombre || 'NOMBRE DE USUARIO',
-                correo: data.correo || 'ejemplo@gmail.com',
-                telefono: data.telefono || 'Sin teléfono',
-                pais: data.pais || 'Sin ubicación',
-                ciudad: data.ciudad || 'Sin ciudad',
-            });
-        } catch (err) {
-            setError(err.message);
-            if (err.message.includes('401')) {
-                // Redirigir a login si el token es inválido
-                localStorage.removeItem('token');
-                window.location.href = '/login';
+    useEffect(() => {
+        const obtenerPerfil = async () => {
+            try {
+                setLoading(true);
+                const data = await fetchWithAuth('http://localhost:5000/api/usuario/perfil');
+                setUserData({
+                    nombre: data.nombre || 'NOMBRE DE USUARIO',
+                    correo: data.correo || 'ejemplo@gmail.com',
+                    telefono: data.telefono || 'Sin teléfono',
+                    pais: data.pais || 'Sin ubicación',
+                    ciudad: data.ciudad || 'Sin ciudad',
+                });
+            } catch (err) {
+                setError(err.message);
+                if (err.message.includes('401')) {
+                    // Redirigir a login si el token es inválido
+                    localStorage.removeItem('token');
+                    window.location.href = '/login';
+                }
+            } finally {
+                setLoading(false);
             }
-        } finally {
-            setLoading(false);
-        }
-    };
+        };
 
-    obtenerPerfil();
-}, []);
+        obtenerPerfil();
+    }, []);
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
-    
+
     const openModal = (type) => {
         setModalType(type);
         setModalOpen(true);
@@ -81,7 +81,7 @@ useEffect(() => {
     const handleChange = (e) => {
         setEditedValue(e.target.value);
     };
-    
+
     const handleRemovePhoto = () => {
         setProfilePhoto(null);
     };
@@ -100,16 +100,16 @@ useEffect(() => {
         setEditField(modalType);
     };
 
-    
+
 
     return (
         <div className="profile-container">
-            <MenuCuenta/>
+            <MenuCuenta />
             <div className="profile-cont">
                 <h1>Tu perfil</h1>
                 <div className="profile-section">
                     <div className="section-title">Foto de perfil</div>
-                    <div className="profile-photo">                    
+                    <div className="profile-photo">
                         {profilePhoto ? (
                             <img src={profilePhoto} alt="Foto de perfil" className="profile-image" />
                         ) : (
@@ -179,7 +179,7 @@ useEffect(() => {
                 <div className="profile-section">
                     <div className="section-title">Teléfono</div>
                     <div className="section-content">
-                    {editField === 'telefono' ? (
+                        {editField === 'telefono' ? (
                             <>
                                 <input type="text" value={editedValue} onChange={handleChange} />
                                 <button onClick={() => handleSave('telefono')}>Guardar</button>
@@ -196,7 +196,7 @@ useEffect(() => {
                 <div className="profile-section">
                     <div className="section-title">País y ciudad</div>
                     <div className="section-content">
-                    {editField === 'paisCiudad' ? (
+                        {editField === 'paisCiudad' ? (
                             <>
                                 <input type="text" value={editedValue} onChange={handleChange} />
                                 <button onClick={() => handleSave('paisCiudad')}>Guardar</button>
@@ -219,7 +219,7 @@ useEffect(() => {
                     </div>
                 </div>
                 <div className="use-message">
-                            Estamos personalizando tu experiencia para que se adapte mejor a tus necesidades. Puedes cambiar esta configuración en cualquier momento.
+                    Estamos personalizando tu experiencia para que se adapte mejor a tus necesidades. Puedes cambiar esta configuración en cualquier momento.
                 </div>
             </div>
             {/* Modal */}
@@ -228,16 +228,16 @@ useEffect(() => {
                     <div className="modal">
                         <button className="modal-close" onClick={closeModal}>X</button>
                         <h2>{modalType === 'email' ? 'Editar correo electrónico' : 'Editar contraseña'}</h2>
-                        <p>{modalType === 'email' ? 'Para realizar cambios en tu cuenta, deberás introducir el código que te hemos enviado a ejemplo@gmail.com.' 
+                        <p>{modalType === 'email' ? 'Para realizar cambios en tu cuenta, deberás introducir el código que te hemos enviado a ejemplo@gmail.com.'
                             : 'Para realizar el cambio de contraseña, deberás introducir el código que te hemos enviado a ejemplo@gmail.com.'}</p>
                         <h3 className="modal-resend">Código</h3>
                         <input type="text" id="code" placeholder="Escribe el código" />
-                        <button className="modal-confirm" onClick={handleContinue}>Continuar</button>                        
+                        <button className="modal-confirm" onClick={handleContinue}>Continuar</button>
                         <p className="modal-resend">¿No has recibido código? vuelve a enviarlo en 30 segundos</p>
                     </div>
                 </div>
             )}
         </div>
-        
+
     );
 };
