@@ -1,5 +1,5 @@
-import { storage } from "./firebase";
-import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+//import { storage } from "./firebase";
+//import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 
 // Subir imagen y obtener URL
 export const uploadImage = async (file, folder = "eventos") => {

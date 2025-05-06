@@ -1,7 +1,7 @@
 // Importaciones básicas
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getStorage } from "firebase/storage";
+//import { initializeApp } from "firebase/app";
+//import { getAnalytics } from "firebase/analytics";
+//import { getStorage } from "firebase/storage";
 
 // Configuración (usa tus propias credenciales)
 const firebaseConfig = {
