@@ -32,8 +32,7 @@ export const Menu = () => {
             <img src={logo} alt="Logo de la página" className="menu_logo" />
             
             <Link to="/">{t("Inicio")}</Link>
-            <Link to="/eventos">{t("Eventos")}</Link>
-            <Link to="/agente">Agente</Link>
+            {/*<Link to="/eventos">{t("Eventos")}</Link>*/}
             {!isAuthenticated ? (
                 <>
                     <Link to="/register">{t("Registrarse")}</Link>
@@ -41,10 +40,9 @@ export const Menu = () => {
                 </>
             ) : (
                 <>
-                
+                    <Link to="/agente">Agente</Link>
                     <Link to="/gestionar">{t("Gestionar")}</Link>
                     <Link to="/contacto">{t("Contacto")}</Link>
-                    <Link to="">{t("Agenda")}</Link>
                     <Link to="/configuracion">{t("Configuración")}</Link>
                     <Link onClick={handleLogout} to="/">{t("Cerrar sesión")}</Link>
                 </>

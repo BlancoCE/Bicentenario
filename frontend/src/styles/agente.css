@@ -1,13 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 .chat-container {
   display: flex;
   flex-direction: column;
   height: 500px;
   max-width: 600px;
-  margin: 0 auto;
+  margin: 30px auto;
   border: 1px solid #ccc;
   border-radius: 8px;
   overflow: hidden;
-  font-family: 'Arial', sans-serif;
+  justify-content: center;
+  font-family: "Open Sans", sans-serif;
 }
 
 .chat-header {

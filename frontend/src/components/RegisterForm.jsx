@@ -126,7 +126,7 @@ export const RegisterForm = () => {
                 return;
             }
 
-            // 🔹 Registro exitoso
+            // 🔹 Registro exitoso   ARREGLAR
             setShowModal(true);
             setTimeout(() => navigate("/"), 2500);
 

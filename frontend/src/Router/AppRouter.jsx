@@ -9,9 +9,8 @@ import { ResetPassword } from '../pages/Reset'
 import { Configuracion } from '../pages/Configuracion'
 import { Notificaciones } from '../pages/Notificaciones'
 import { MenuCuenta } from '../pages/MenuCuenta'
-//import { Dashboard } from '../components/Pruebas'
 import { Agente } from '../components/Agente'
-import { Eventos } from '../components/eventos'
+import { Gestionar } from '../components/Gestionar'
 
 export const AppRouter = () => {
     return (
@@ -28,8 +27,8 @@ export const AppRouter = () => {
             <Route path='/menucuenta' element={<MenuCuenta/>}/>
             <Route path="/configuracion" element={<Configuracion/>}/>
             <Route path='/notificaciones' element={<Notificaciones/>}/>
-            <Route path='/eventos' element={<Eventos/>}/>
             <Route path='/agente' element={<Agente/>}/>
+            <Route path='/gestionar' element={<Gestionar/>}/>
             <Route path='/*' element={<h1>Error 404</h1>} />
         </Routes>
     )

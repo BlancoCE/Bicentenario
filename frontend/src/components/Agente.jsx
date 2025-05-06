@@ -125,7 +125,7 @@ export const Agente = () => {
         <div ref={messagesEndRef} />
       </div>
       
-      {/* Sugerencias de preguntas */}
+      {/* Sugerencias de preguntas 
       <div className="suggestions-container">
         {suggestions.map((suggestion, i) => (
           <button 
@@ -136,7 +136,7 @@ export const Agente = () => {
             {suggestion}
           </button>
         ))}
-      </div>
+      </div>*/}
       
       <form onSubmit={handleSubmit} className="chat-input">
         <input

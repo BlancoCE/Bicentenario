@@ -5,7 +5,7 @@ import { Eventos } from './eventos';
 import { Usuarios } from './Usuarios';
 import { fetchWithAuth } from '../utils/api';
 
-export const Dashboard = () => {
+export const Gestionar = () => {
   const [userRole, setUserRole] = useState('ADMINISTRADOR');
   const [activeSection, setActiveSection] = useState('dashboard');
   const [stats, setStats] = useState({
