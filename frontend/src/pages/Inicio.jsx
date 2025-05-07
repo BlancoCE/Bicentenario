@@ -9,8 +9,6 @@ import EventCarousel from "../components/5eventos";
 export const Inicio = () => {
   const { t, i18n } = useTranslation();
   const [events, setEvents] = useState([]);
-  
-  const [events2, setEvents2] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState(null);

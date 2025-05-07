@@ -3,7 +3,7 @@ const pool = require("../config/db");
 // GET todos los eventos
 const geteventos = async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM Eventos");
+    const result = await pool.query("SELECT * FROM Eventos order by fecha");
     res.json(result.rows);
   } catch (error) {
     console.error("Error al obtener eventos:", error);
