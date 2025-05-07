@@ -39,7 +39,6 @@ export const Menu = () => {
                 </>
             ) : (
                 <>
-                
                     <Link to="/gestionar">{t("Gestionar")}</Link>
                     <Link to="/contacto">{t("Contacto")}</Link>
                     <Link to="/configuracion">{t("Configuración")}</Link>

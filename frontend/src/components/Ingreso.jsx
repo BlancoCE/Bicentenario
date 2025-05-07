@@ -37,6 +37,7 @@ export const Ingreso = () => {
             }
 
             localStorage.setItem("token", data.token); // 🔹 Guardar token en localStorage
+
             navigate("/"); // 🔹 Redirigir al inicio
             window.location.reload();
 

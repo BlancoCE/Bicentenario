@@ -5,6 +5,7 @@ import userLogo from '../assets/user-logo.png'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
 import { fetchWithAuth } from '../utils/api';
 
+
 export const Configuracion = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [modalType, setModalType] = useState(null);
