@@ -1,10 +1,11 @@
-import logo from '../assets/Bicentenario-Bo.png'
-import { EventCalendar } from "../components/calendar";
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from "react-i18next";
-import '../styles/contador.css'
 import { format, differenceInDays, differenceInHours, differenceInMinutes, differenceInSeconds } from 'date-fns';
+import logo from '../assets/Bicentenario-Bo.png';
+import { EventCalendar } from "../components/calendar";
 import EventCarousel from "../components/5eventos";
+import '../styles/contador.css';
+import '../styles/inicio.css';
 
 export const Inicio = () => {
   const { t, i18n } = useTranslation();
@@ -20,7 +21,7 @@ export const Inicio = () => {
   });
 
   // Fecha objetivo: 6 de agosto
-  const targetDate = new Date(new Date().getFullYear(), 7, 6); // Mes 7 = Agosto (0-indexado)
+  const targetDate = new Date(new Date().getFullYear(), 7, 6);
 
   // Actualizar contador cada segundo
   useEffect(() => {
@@ -84,37 +85,37 @@ export const Inicio = () => {
   return (
     <>
       <div className="header-section">
-         {/* Contador para el 6 de agosto */}
-      <div className="countdown-section">
-        <h2>Faltan:</h2>
-        <div className="countdown-container">
-          <div className="countdown-box">
-            <span className="countdown-value">{countdown.days}</span>
-            <span className="countdown-label">Días</span>
-          </div>
-          <div className="countdown-box">
-            <span className="countdown-value">{countdown.hours}</span>
-            <span className="countdown-label">Horas</span>
-          </div>
-          <div className="countdown-box">
-            <span className="countdown-value">{countdown.minutes}</span>
-            <span className="countdown-label">Minutos</span>
-          </div>
-          <div className="countdown-box">
-            <span className="countdown-value">{countdown.seconds}</span>
-            <span className="countdown-label">Segundos</span>
+        <div className="countdown-background">
+          <div className="countdown-overlay">
+            <div className="countdown-content">
+              <h2>Faltan:</h2>
+              <div className="countdown-container">
+                <div className="countdown-box">
+                  <span className="countdown-value">{countdown.days}</span>
+                  <span className="countdown-label">Días</span>
+                </div>
+                <div className="countdown-box">
+                  <span className="countdown-value">{countdown.hours}</span>
+                  <span className="countdown-label">Horas</span>
+                </div>
+                <div className="countdown-box">
+                  <span className="countdown-value">{countdown.minutes}</span>
+                  <span className="countdown-label">Minutos</span>
+                </div>
+                <div className="countdown-box">
+                  <span className="countdown-value">{countdown.seconds}</span>
+                  <span className="countdown-label">Segundos</span>
+                </div>
+              </div>
+              <h2>para el Bicentenario</h2>
+              
+            </div>
           </div>
         </div>
-
-        <h2>para el Bicentenario</h2>
-        <EventCarousel/>
-
       </div>
-        <img src={logo} alt="Pie de página Bolivia" className="footer-image" />
-      </div>
-
-      <div className="p-4">
-        <h2 className="text-xl font-bold mb-4">Calendario de Eventos</h2>
+      <EventCarousel />
+      <div className="calendar-section">
+        <h2 className="calendar-title">Calendario de Eventos</h2>
         <EventCalendar
           events={formattedEvents}
           onEventSelect={handleEventSelect}
@@ -123,4 +124,4 @@ export const Inicio = () => {
       </div>
     </>
   );
-}
+};
