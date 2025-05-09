@@ -1,4 +1,5 @@
 const pool = require("../config/db");
+const jwt = require('jsonwebtoken');
 
 // GET todos los eventos
 const geteventos = async (req, res) => {
@@ -97,14 +98,6 @@ const postevento = async (req, res) => {
     
     const result = await pool.query(eventQuery, eventData);
     
-    // Si hay un expositor asociado, crear la relación en otra tabla
-  /*  if (expositor) {
-      await pool.query(
-        "INSERT INTO eventos_expositores (id_evento, id_expositor) VALUES ($1, $2)",
-        [result.rows[0].id_evento, expositor]
-      );
-    }*/
-    
     // Devolver el evento creado
     res.status(201).json(result.rows[0]);
   } catch (error) {
@@ -149,6 +142,11 @@ const deleteevento = async (req, res) => {
       return res.status(400).json({ message: "ID de evento no válido" });
     }
 
+    const result2 = await pool.query(
+      "DELETE FROM participantes_eventos WHERE id_evento = $1 RETURNING *", 
+      [id]
+    );
+
     const result = await pool.query(
       "DELETE FROM Eventos WHERE id_evento = $1 RETURNING *", 
       [id]
@@ -170,6 +168,128 @@ const deleteevento = async (req, res) => {
   }
 };
 
+const subscribirse = async (req, res) => {
+  // 1. Validar token de autenticación
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) {
+    return res.status(401).json({ 
+      success: false,
+      message: "Token de autenticación requerido" 
+    });
+  }
+
+  try {
+    // 2. Verificar y decodificar el token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id;
+
+    // 3. Validar datos de entrada
+    const { id_evento } = req.body;
+    if (!id_evento) {
+      return res.status(400).json({
+        success: false,
+        message: "El ID del evento es requerido"
+      });
+    }
+
+    // 4. Verificar si el evento existe
+    const eventoExistente = await pool.query(
+      'SELECT id_evento FROM eventos WHERE id_evento = $1',
+      [id_evento]
+    );
+    
+    if (eventoExistente.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "El evento no existe"
+      });
+    }
+
+    // 5. Verificar si el usuario ya está suscrito
+    const suscripcionExistente = await pool.query(
+      `SELECT * FROM participantes_eventos 
+       WHERE id_usuario = $1 AND id_evento = $2`,
+      [userId, id_evento]
+    );
+
+    if (suscripcionExistente.rows.length > 0) {
+      return res.status(409).json({
+        success: false,
+        message: "El usuario ya está suscrito a este evento"
+      });
+    }
+
+    // 6. Crear la suscripción
+    const result = await pool.query(
+      `INSERT INTO participantes_eventos (id_usuario, id_evento)
+       VALUES ($1, $2)
+       RETURNING *`,
+      [userId, id_evento]
+    );
+
+    // 7. Responder con éxito
+    return res.status(201).json({
+      success: true,
+      data: result.rows[0],
+      message: "Suscripción realizada correctamente"
+    });
+
+  } catch (error) {
+    console.error('Error en suscripción:', error);
+    
+    // Manejar diferentes tipos de errores
+    if (error.name === 'JsonWebTokenError') {
+      return res.status(401).json({
+        success: false,
+        message: "Token inválido"
+      });
+    }
+
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({
+        success: false,
+        message: "Token expirado"
+      });
+    }
+
+    // Errores de base de datos
+    if (error.code === '23505') { // Violación de unique constraint
+      return res.status(409).json({
+        success: false,
+        message: "El usuario ya está suscrito a este evento"
+      });
+    }
+
+    return res.status(500).json({
+      success: false,
+      message: "Error interno del servidor",
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
+// En tu controlador (ej. eventosController.js)
+const getEventosPorTipo = async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT tipo, COUNT(*) as cantidad 
+       FROM eventos 
+       GROUP BY tipo 
+       ORDER BY cantidad DESC`
+    );
+    res.json({
+      success: true,
+      data: result.rows
+    });
+  } catch (error) {
+    console.error("Error al obtener eventos por tipo:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error al obtener estadísticas de eventos"
+    });
+  }
+};
+
 module.exports = {
   geteventos,
   geteventoe,
@@ -179,4 +299,6 @@ module.exports = {
   getexpositores,
   getpatrocinadores,
   get5eventos,
+  subscribirse,
+  getEventosPorTipo,
 };

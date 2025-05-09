@@ -147,10 +147,43 @@ const putrol = async (req, res) => {
   }
 };
 
+const suscrito = async (req, res) => {
+  try {
+    // Obtener el ID del usuario del token JWT
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ message: "No autorizado" });
+    }
+
+    // Verificar y decodificar el token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id; // Asume que el token contiene el ID del usuario
+
+    const result = await pool.query(
+      "SELECT e.id_evento FROM participantes_eventos pe, eventos e WHERE pe.id_usuario = $1 and pe.id_evento=e.id_evento",
+      [userId]  // Usar el ID del token, no de los parámetros
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Eventos no encontrado" });
+    }
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error al obtener el usuario:", error);
+    if (error.name === 'JsonWebTokenError') {
+      return res.status(401).json({ error: "Token inválido" });
+    }
+    res.status(500).json({ error: "Error del servidor" });
+  }
+};
+
+
 module.exports = {
   getperfil,
   getusuarios,
   getrol,
   getroles,
   putrol,
+  suscrito,
 };

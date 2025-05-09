@@ -1,0 +1,106 @@
+/* src/styles/graficos.css */
+
+/* Contenedor principal */
+.event-types-chart {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin: 20px 0;
+  margin-top: 50px;
+  border: 1px solid #eaeaea;
+}
+
+/* Contenedor de los botones */
+.chart-toggle {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Estilo base para los botones */
+.chart-toggle button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #f0f0f0; /* Cambiado de #000 a gris claro */
+  color: #333; /* Color de texto oscuro */
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border: 1px solid #d1d5db; /* Borde más visible */
+}
+
+
+/* Botón activo */
+.chart-toggle button.active {
+  background: #3b82f6;
+  color: white;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+  border-color: #3b82f6;
+  transform: translateY(-2px); /* Efecto de elevación */
+}
+
+/* Efecto hover para botones no activos */
+.chart-toggle button:not(.active):hover {
+  background: #e5e7eb;
+  color: #1e40af;
+  border-color: #bfdbfe;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Contenedor del gráfico */
+.chart-container {
+  height: 400px;
+  position: relative;
+  margin-top: 15px;
+}
+
+/* Mensajes de carga y error */
+.chart-loading, .chart-error {
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 16px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.chart-error {
+  color: #ef4444;
+  background: #fee2e2;
+}
+
+/* Efectos para pantallas pequeñas */
+@media (max-width: 768px) {
+  .chart-toggle {
+    gap: 8px;
+  }
+  
+  .chart-toggle button {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+  
+  .chart-container {
+    height: 350px;
+  }
+}
+
+/* Animación para el botón activo */
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+  70% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+}
+
+.chart-toggle button.active {
+  animation: pulse 1.5s infinite;
+}

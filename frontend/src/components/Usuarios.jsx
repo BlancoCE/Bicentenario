@@ -134,7 +134,7 @@ export const Usuarios = () => {
                                                     ))}
                                                 </select>
                                             ) : (
-                                                <span>No permitido</span>
+                                                <span>Administrador</span>
                                             )}
                                         </td>
                                     )}

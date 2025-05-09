@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { postWithAuth } from '../utils/api';
 import { useTranslation } from "react-i18next";
 import defaultImage from '../assets/sinimagen.jpg';
 import { format, parseISO, isBefore } from 'date-fns';
@@ -26,6 +26,23 @@ const EventCarousel = () => {
       console.error(err.message);
     }
   };
+
+  const subscribeEvent = async (event) => {
+    try {
+      const data = await postWithAuth('http://localhost:5000/api/subscribirse', event);
+      return data; // Retorna los datos para que el componente pueda usarlos
+    } catch (err) {
+      console.error('Error en subscribeEvent:', err.message);
+      
+      // Puedes personalizar el mensaje de error según el tipo de error
+      const errorMessage = err.response?.status === 409 
+        ? 'Ya estás suscrito a este evento' 
+        : 'Error al suscribirse al evento';
+      
+      throw new Error(errorMessage); // Re-lanza el error para manejo en el componente
+    }
+  };
+
 
   useEffect(() => {
     fetch5Events();
@@ -144,7 +161,9 @@ const EventCarousel = () => {
               Más información
             </button>
 
-            <button className="action-button subscribe">
+            <button 
+              className="action-button subscribe"
+              onClick={() => subscribeEvent(currentEvent)}>
               Suscribirse
             </button>
           </div>
@@ -223,11 +242,10 @@ const EventCarousel = () => {
                 <p><strong>Contacto:</strong> {selectedEvent.contacto}</p>
               )}
             </div>
-
             <div className="modal-footer">
               <button
                 className={`btn-subscribe ${isEventPast(selectedEvent) ? 'disabled' : ''}`}
-                onClick={() => !isEventPast(selectedEvent) && handleSubscribe(selectedEvent.id_evento)}
+                onClick={() => !isEventPast(selectedEvent) && subscribeEvent(selectedEvent)}
                 disabled={isEventPast(selectedEvent)}
               >
                 {t('eventos.suscribirse')}

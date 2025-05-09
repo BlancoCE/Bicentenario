@@ -4,15 +4,15 @@ import '../styles/pruebas.css';
 import { Eventos } from './eventos';
 import { Usuarios } from './Usuarios';
 import { fetchWithAuth } from '../utils/api';
+import { EventTypesChart } from './grafico';
 
 export const Gestionar = () => {
   const [userRole, setUserRole] = useState('ADMINISTRADOR');
   const [activeSection, setActiveSection] = useState('dashboard');
+  const [loadingStats, setLoadingStats] = useState(true);
   const [stats, setStats] = useState({
     users: 0,
     events: 0,
-    comments: 0,
-    resources: 0
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -50,16 +50,37 @@ export const Gestionar = () => {
     }
   };
 
+  const fetchStats = async () => {
+    try {
+      setLoadingStats(true);
+      setError(null);
+      
+      const response = await fetch('http://localhost:5000/api/stats');
+      
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      setStats({
+        users: data.users || 0,
+        events: data.events || 0
+      });
+      
+    } catch (err) {
+      console.error('Error fetching stats:', err);
+      setError(err.message);
+      // Opcional: resetear a valores por defecto
+      setStats({ users: 0, events: 0 });
+    } finally {
+      setLoadingStats(false);
+    }
+  };
+
   // Simular carga de datos
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setStats({
-          users: 0,
-          events: 0,
-          comments: 0,
-          resources: 0
-        });
         setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -67,9 +88,9 @@ export const Gestionar = () => {
         setLoading(false);
       }
     };
-
     fetchData();
     fetchUserRole();
+    fetchStats();
   }, []);
 
   // Cuando se cambia el evento a editar
@@ -133,7 +154,7 @@ export const Gestionar = () => {
             </button>
           </li>
 
-          {(userRole.rol === 'SUPERADMINISTRADOR' || userRole.rol === 'ADMINISTRADOR' || userRole.rol === 'organizador') && (
+          {(userRole.rol === 'SUPERADMINISTRADOR' || userRole.rol === 'ADMINISTRADOR' || userRole.rol === 'ORGANIZADOR') && (
             <li className={activeSection === 'eventos' ? 'active' : ''}>
               <button onClick={() => handleSectionChange('eventos')}>
                 <i className="bi bi-calendar-event"></i>
@@ -171,7 +192,7 @@ export const Gestionar = () => {
           )}
           
           <h1>
-            {activeSection === 'dashboard' && 'Dashboard'}
+            {activeSection === 'dashboard' && 'Dashboard'} 
             {activeSection === 'eventos' && 'Gestión de Eventos'}
             {activeSection === 'usuarios' && 'Gestión de Usuarios'}
           </h1>
@@ -201,27 +222,12 @@ export const Gestionar = () => {
                 <h3>Eventos</h3>
                 <p>{stats.events}</p>
               </div>
-              <div className="stat-card bg-warning">
-                <i className="bi bi-chat-left-text"></i>
-                <h3>Comentarios</h3>
-                <p>{stats.comments}</p>
-              </div>
             </div>
 
             <div className="charts-row">
               <div className="chart-container">
-                <h3>Registro de Usuarios</h3>
-                <div className="chart-placeholder">Gráfico de usuarios</div>
+                <div className="chart-placeholder"><EventTypesChart /></div>
               </div>
-              <div className="chart-container">
-                <h3>Tipos de Eventos</h3>
-                <div className="chart-placeholder">Gráfico de eventos</div>
-              </div>
-            </div>
-
-            <div className="chart-container full-width">
-              <h3>Tráfico del Sitio</h3>
-              <div className="chart-placeholder">Gráfico de tráfico</div>
             </div>
           </div>
         )}

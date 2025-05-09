@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { format, parseISO, isBefore } from 'date-fns';
 import "../styles/eventos.css";
 import defaultImage from '../assets/sinimagen.jpg';
+import { fetchWithAuth, postWithAuth } from '../utils/api';
 
 export const Eventos = () => {
     const { t, i18n } = useTranslation();
@@ -13,6 +14,8 @@ export const Eventos = () => {
     const [filterModality, setFilterModality] = useState('todos');
     const [showPastEvents, setShowPastEvents] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState(null);
+    const [subscribedEvents, setSubscribedEvents] = useState([]);
+    const [loadingSubscriptions, setLoadingSubscriptions] = useState(true);
 
     const fetchEvents = async () => {
         try {
@@ -28,8 +31,52 @@ export const Eventos = () => {
         }
     };
 
+    const fetchSubscribedEvents = async () => {
+        try {
+            setLoadingSubscriptions(true);
+            const data = await fetchWithAuth('http://localhost:5000/api/suscrito');
+
+            setSubscribedEvents(data.map(item => item.id_evento));
+        } catch (err) {
+            console.error(err.message);
+        } finally {
+            setLoadingSubscriptions(false);
+        }
+    };
+
+    const subscribeEvent = async (event) => {
+        try {
+            if(localStorage.getItem('token')){
+                const data = await postWithAuth('http://localhost:5000/api/subscribirse', { 
+                    id_evento: event.id_evento 
+                });
+                
+                // Actualizar la lista de suscripciones después de suscribirse
+                await fetchSubscribedEvents();
+                
+                return data;
+            }else{
+                alert("Necesitas logearte para suscribirte al evento");
+            }
+
+        } catch (err) {
+            console.error('Error en subscribeEvent:', err.message);
+            
+            const errorMessage = err.message.includes('409') 
+                ? 'Ya estás suscrito a este evento' 
+                : 'Error al suscribirse al evento';
+            
+            throw new Error(errorMessage);
+        }
+    };
+
     useEffect(() => {
         fetchEvents();
+        if(localStorage.getItem('token')){
+            fetchSubscribedEvents();
+        }else{
+            setLoadingSubscriptions(false);
+        }
     }, []);
 
     useEffect(() => {
@@ -61,12 +108,6 @@ export const Eventos = () => {
         setFilteredEvents(results);
     }, [searchTerm, filterType, filterModality, showPastEvents, events]);
 
-    const handleSubscribe = (eventId) => {
-        // Lógica para suscribirse al evento
-        console.log(`Suscrito al evento ${eventId}`);
-        // Aquí iría tu llamada a la API para suscribir al usuario
-    };
-
     const isEventPast = (event) => {
         // Extraer solo la parte de la fecha (sin hora)
         const fechaPart = event.fecha.split('T')[0]; // "2025-04-09"
@@ -90,6 +131,11 @@ export const Eventos = () => {
 
     // Obtener tipos únicos para el filtro
     const eventTypes = [...new Set(events.map(event => event.tipo))];
+
+    // Función para verificar si el usuario está suscrito a un evento
+    const isSubscribed = (eventId) => {
+        return subscribedEvents.includes(eventId);
+    };
 
     return (
         <div className="eventos-container">
@@ -171,21 +217,26 @@ export const Eventos = () => {
                                 </p>
 
                                 <div className="evento-acciones">
-                                    <button
-                                        className="btn-info"
-                                        onClick={() => openEventDetails(event)}
-                                    >
-                                        {t('eventos.mas_info')}
-                                    </button>
+                                <button
+                                    className="btn-info"
+                                    onClick={() => openEventDetails(event)}
+                                >
+                                    {t('eventos.mas_info')}
+                                </button>
 
-                                    <button
-                                        className={`btn-subscribe ${isEventPast(event) ? 'disabled' : ''}`}
-                                        onClick={() => !isEventPast(event) && handleSubscribe(event.id_evento)}
-                                        disabled={isEventPast(event)}
-                                    >
-                                        {t('eventos.suscribirse')}
-                                    </button>
-                                </div>
+                                <button
+                                    className={`btn-subscribe ${
+                                        isEventPast(event) || isSubscribed(event.id_evento) ? 'disabled' : ''
+                                    } ${
+                                        isSubscribed(event.id_evento) ? 'subscribed' : ''
+                                    }`}
+                                    onClick={() => !isEventPast(event) && !isSubscribed(event.id_evento) && subscribeEvent(event)}
+                                    disabled={isEventPast(event) || isSubscribed(event.id_evento) || loadingSubscriptions}
+                                >
+                                    {loadingSubscriptions ? 'Cargando...' : 
+                                     isSubscribed(event.id_evento) ? 'Suscrito ✓' : t('eventos.suscribirse')}
+                                </button>
+                            </div>
                             </div>
                         </div>
                     ))
@@ -237,14 +288,19 @@ export const Eventos = () => {
                         </div>
 
                         <div className="modal-footer">
-                            <button
-                                className={`btn-subscribe ${isEventPast(selectedEvent) ? 'disabled' : ''}`}
-                                onClick={() => !isEventPast(selectedEvent) && handleSubscribe(selectedEvent.id_evento)}
-                                disabled={isEventPast(selectedEvent)}
-                            >
-                                {t('eventos.suscribirse')}
-                            </button>
-                        </div>
+                        <button
+                            className={`btn-subscribe ${
+                                isEventPast(selectedEvent) || isSubscribed(selectedEvent.id_evento) ? 'disabled' : ''
+                            } ${
+                                isSubscribed(selectedEvent.id_evento) ? 'subscribed' : ''
+                            }`}
+                            onClick={() => !isEventPast(selectedEvent) && !isSubscribed(selectedEvent.id_evento) && subscribeEvent(selectedEvent)}
+                            disabled={isEventPast(selectedEvent) || isSubscribed(selectedEvent.id_evento) || loadingSubscriptions}
+                        >
+                            {loadingSubscriptions ? 'Cargando...' : 
+                             isSubscribed(selectedEvent.id_evento) ? 'Suscrito ✓' : t('eventos.suscribirse')}
+                        </button>
+                    </div>
                     </div>
                 </div>
             )}

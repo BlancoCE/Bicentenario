@@ -1,7 +1,8 @@
 const express = require("express");
 const { register, login, confirmAccount, recoverPassword, resetPassword } = require("../controllers/authController");
-const {geteventos, get5eventos, geteventoe, postevento, putevento, deleteevento, getexpositores, getpatrocinadores} = require("../controllers/eventosController");
-const {getperfil, getusuarios, getrol, getroles, putrol} = require("../controllers/usuarioController");
+const { getEventosPorTipo, subscribirse, geteventos, get5eventos, geteventoe, postevento, putevento, deleteevento, getexpositores, getpatrocinadores} = require("../controllers/eventosController");
+const {getperfil, getusuarios, getrol, getroles, putrol, suscrito} = require("../controllers/usuarioController");
+const { getstats } = require("../controllers/statsController");
 const router = express.Router();
 
 router.post("/register", register);
@@ -22,5 +23,9 @@ router.get("/rol", getrol);
 router.get("/5eventos",get5eventos);
 router.get("/roles", getroles);
 router.put("/usuarios/:id/rol",putrol);
+router.post("/subscribirse",subscribirse);
+router.get("/suscrito",suscrito);
+router.get("/stats", getstats);
+router.get("/tipo/evento",getEventosPorTipo);
 
 module.exports = router;

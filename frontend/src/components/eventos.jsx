@@ -280,7 +280,8 @@ export const Eventos = () => {
                             <th></th>
                             <th>Nombre</th>
                             <th>Fecha</th>
-                            <th>Acciones</th>
+                            <th></th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -314,6 +315,7 @@ export const Eventos = () => {
                                         >
                                             <i className="bi bi-pencil"></i> Editar
                                         </button>
+                                        </td><td>
                                         <button
                                             className="btn btn-sm btn-danger"
                                             onClick={() => eliminarEvento(event.id_evento || event.id)}
