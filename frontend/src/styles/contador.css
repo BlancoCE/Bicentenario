@@ -76,3 +76,61 @@
       font-size: 0.8rem;
     }
   }
+  /* Estilos para el contenedor del contador */
+.countdown-container {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin: 2rem 0;
+  flex-wrap: wrap;
+}
+
+/* Estilos para cada caja del contador */
+.countdown-box {
+  border-radius: 8px;
+  padding: 1.5rem;
+  min-width: 100px;
+  transition: transform 0.3s ease;
+}
+
+.countdown-box:hover {
+  transform: translateY(-5px);
+}
+
+.countdown-value {
+  font-size: 2.5rem;
+  font-weight: bold;
+  display: block;
+  line-height: 1;
+}
+
+.countdown-label {
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 0.5rem;
+  display: block;
+}
+
+/* Estilos para los títulos */
+.countdown-content h2 {
+  color: #2c3e50;
+  font-size: 1.8rem;
+  margin: 0.5rem 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .countdown-container {
+    gap: 1rem;
+  }
+  
+  .countdown-box {
+    min-width: 80px;
+    padding: 1rem;
+  }
+  
+  .countdown-value {
+    font-size: 2rem;
+  }
+}

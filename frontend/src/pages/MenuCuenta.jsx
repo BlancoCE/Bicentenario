@@ -32,7 +32,6 @@ export const MenuCuenta = () => {
                     <li><a href="#">Accesibilidad</a></li>
                 </ul>
             </div>
-            {/*
             <div className="sidebar-section">
                 <div className="section-title">Pagos y planes</div>
                 <ul className="section-links">
@@ -40,7 +39,6 @@ export const MenuCuenta = () => {
                     <li><a href="#">Pedidos y facturas</a></li>
                 </ul>
             </div>
-            */}
         </aside>
         
     );

@@ -23,15 +23,16 @@ export const Eventos = () => {
         comments: 0,
         resources: 0
     });
+
     const [newEvent, setNewEvent] = useState({
         nombre: '',
         fecha: '',
-        fecha2: '',
+        fecha_final: '',
         hora: '',
-        hora2: '',
+        hora_final: '',
         modalidad: '',
         ubicacion: '',
-        ubicacion2: '',
+        coordenadas: '',
         enlace: '',
         tipo: '',
         descripcion: '',
@@ -40,6 +41,7 @@ export const Eventos = () => {
         expositor: '',
         patrocinador: '',
     });
+
     const fetchEvents = async () => {
         try {
             const response = await fetch('http://localhost:5000/api/eventos');
@@ -58,7 +60,7 @@ export const Eventos = () => {
 
             const response3 = await fetch('http://localhost:5000/api/patrocinadores');
             if (!response3.ok) {
-                throw new Error('Error al obtener los expositores');
+                throw new Error('Error al obtener los patrocinadores');
             }
             const data3 = await response3.json();
             setPatrocinadores(data3);
@@ -66,10 +68,10 @@ export const Eventos = () => {
             setError(err.message);
         }
     };
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Datos de ejemplo
                 setStats({
                     users: 0,
                     events: 0,
@@ -77,10 +79,7 @@ export const Eventos = () => {
                     resources: 0
                 });
 
-                // Obtener eventos reales desde la API
                 await fetchEvents();
-
-
                 setLoading(false);
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -91,50 +90,38 @@ export const Eventos = () => {
 
         fetchData();
     }, []);
-    const fetchEventById = async (id) => {
-        try {
-            const response = await fetch(`http://localhost:5000/api/eventos/${id}`);
-            if (!response.ok) {
-                throw new Error('Error al obtener el evento');
-            }
-            const data = await response.json();
-            setCurrentEvent(data);
-            setIsEditing(true);
-        } catch (err) {
-            setError(err.message);
-        }
-    };
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-
-        // Si es un campo de fecha/hora, asegurarse de mantener el formato correcto
-        if (name === 'fecha' || name === 'fecha2') {
-            setCurrentEvent(prev => ({
-                ...prev,
-                [name]: value ? new Date(value).toISOString().split('T')[0] : ''
-            }));
-        } else {
-            setCurrentEvent(prev => ({
-                ...prev,
-                [name]: value
-            }));
-        }
+        setCurrentEvent(prev => ({
+            ...prev,
+            [name]: value
+        }));
     };
+
     const cancelarEdicion = () => {
         setIsEditing(false);
         setEditingEventId(null);
         setCurrentEvent(null);
     };
+
     const guardarEvento = async (e) => {
         e.preventDefault();
 
         try {
+            // Normalizar datos antes de enviar
+            const eventoActualizado = {
+                ...currentEvent,
+                ubicacion: currentEvent.modalidad === 'presencial' ? currentEvent.ubicacion : null,
+                enlace: currentEvent.modalidad === 'virtual' ? currentEvent.enlace : null
+            };
+
             const response = await fetch(`http://localhost:5000/api/eventos/${editingEventId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(currentEvent),
+                body: JSON.stringify(eventoActualizado),
             });
 
             if (!response.ok) {
@@ -143,7 +130,6 @@ export const Eventos = () => {
 
             const updatedEvent = await response.json();
 
-            // Actualizar la lista de eventos con el evento actualizado
             setEvents(prevEvents =>
                 prevEvents.map(event =>
                     (event.id_evento === editingEventId || event.id === editingEventId)
@@ -152,15 +138,15 @@ export const Eventos = () => {
                 )
             );
 
-            // Cerrar el panel de edición
             setIsEditing(false);
             setEditingEventId(null);
             setCurrentEvent(null);
         } catch (error) {
             console.error('Error actualizando evento:', error);
-            alert('No se pudo actualizar el evento');
+            alert('No se pudo actualizar el evento: ' + error.message);
         }
     };
+
     const formattedEvents = events.map(event => ({
         id: event.id_evento || event.id,
         title: event.nombre || event.title,
@@ -171,6 +157,7 @@ export const Eventos = () => {
         desc: event.descripcion || event.description,
         tipo: event.tipo || event.type
     }));
+
     const eliminarEvento = async (id) => {
         if (!window.confirm('¿Está seguro que desea eliminar este evento?')) return;
 
@@ -183,7 +170,6 @@ export const Eventos = () => {
                 throw new Error('Error al eliminar el evento');
             }
 
-            // Actualizar la lista de eventos después de eliminar
             setEvents(prevEvents => prevEvents.filter(event =>
                 (event.id_evento !== id && event.id !== id)
             ));
@@ -198,6 +184,7 @@ export const Eventos = () => {
             alert('No se pudo eliminar el evento');
         }
     };
+
     const crearEvento = async (e) => {
         e.preventDefault();
         try {
@@ -213,49 +200,52 @@ export const Eventos = () => {
             }
             const data = await response.json();
 
-            // Actualizar la lista de eventos
             setEvents([...events, data]);
-
-            // Cerrar el modal y resetear el formulario
             setShowAddModal(false);
             setNewEvent({
                 nombre: '',
                 fecha: '',
+                fecha_final: '',
+                hora: '',
+                hora_final: '',
+                modalidad: '',
+                ubicacion: '',
+                coordenadas: '',
+                enlace: '',
                 tipo: '',
                 descripcion: '',
-                ubicacion: ''
+                numero: '',
+                imagen: '',
+                expositor: '',
+                patrocinador: '',
             });
         } catch (error) {
             console.error('Error creando evento:', error);
             alert('No se pudo crear el evento');
         }
     };
+
     const handleImageUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
         try {
-            // 1. Subir imagen
             const imageUrl = await uploadImage(file);
-            // 2. Actualizar el estado del evento
             setNewEvent(prev => ({ ...prev, imagen: imageUrl }));
-
-            // Opcional: Mostrar vista previa
-            // setPreviewImage(imageUrl);
-
         } catch (error) {
             alert("Error al subir la imagen: " + error.message);
         }
     };
+
     const formatDate = (dateString) => {
         if (!dateString) return 'Fecha no definida';
-
         try {
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
             return new Date(dateString).toLocaleDateString('es-ES', options);
         } catch {
-            return dateString; // Si hay error al parsear, devolver el string original
+            return dateString;
         }
     };
+
     const handleEventSelect = (event) => {
         setSelectedEvent(event);
         setShowModal(true);
@@ -270,6 +260,7 @@ export const Eventos = () => {
         });
         setShowModal(true);
     };
+
     return (
         <div className="crud-section">
             <div className="section-header">
@@ -281,6 +272,7 @@ export const Eventos = () => {
                     <i className="bi bi-plus-circle"></i> Nuevo Evento
                 </button>
             </div>
+
             <div className="table-responsive">
                 <table className="table">
                     <thead>
@@ -288,36 +280,42 @@ export const Eventos = () => {
                             <th></th>
                             <th>Nombre</th>
                             <th>Fecha</th>
-                            <th>Acciones</th>
+                            <th></th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         {events.length > 0 ? (
                             events.map((event) => (
-                                <tr key={event.id || event._id}>
+                                <tr key={event.id_evento || event.id}>
                                     <td>
                                         <img
                                             src={event.imagen || event.image || sinImagen}
                                             alt="Portada del evento"
                                             className="event-thumbnail"
                                             onError={(e) => {
-                                                e.target.src = sinImagen; // Fallback por si la URL de la imagen es inválida
+                                                e.target.src = sinImagen;
                                             }}
                                         />
                                     </td>
                                     <td>{event.nombre || event.name || 'Sin nombre'}</td>
                                     <td>{formatDate(event.fecha || event.date)}</td>
-
                                     <td>
                                         <button
                                             className="btn btn-sm btn-primary me-2"
                                             onClick={() => {
                                                 setEditingEventId(event.id_evento || event.id);
-                                                fetchEventById(event.id_evento || event.id);
+                                                setIsEditing(true);
+                                                setCurrentEvent({
+                                                    ...event,
+                                                    fecha: event.fecha ? format(new Date(event.fecha), 'yyyy-MM-dd') : '',
+                                                    fecha_final: event.fecha_final ? format(new Date(event.fecha_final), 'yyyy-MM-dd') : '',
+                                                });
                                             }}
                                         >
                                             <i className="bi bi-pencil"></i> Editar
                                         </button>
+                                        </td><td>
                                         <button
                                             className="btn btn-sm btn-danger"
                                             onClick={() => eliminarEvento(event.id_evento || event.id)}
@@ -329,31 +327,29 @@ export const Eventos = () => {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="6" className="text-center">No hay eventos registrados</td>
+                                <td colSpan="4" className="text-center">No hay eventos registrados</td>
                             </tr>
                         )}
                     </tbody>
                 </table>
             </div>
-            {/* Panel de edición de eventos */}
-            {isEditing && currentEvent && (
-                <div className="edit-panel">
-                    <div className="edit-panel-content">
-                        <div className="edit-panel-header">
-                            <h3>Editar Evento</h3>
-                            <button
-                                className="btn btn-close"
-                                onClick={() => {
-                                    setIsEditing(false);
-                                    setEditingEventId(null);
-                                    setCurrentEvent(null);
-                                }}
-                            >
-                                &times;
-                            </button>
-                        </div>
 
-                        <form onSubmit={guardarEvento}>
+            {/* Modal de edición de eventos */}
+{isEditing && currentEvent && (
+    <div className="modal-backdrop">
+        <div className="modal-container">
+            <div className="modal-header">
+                <h3>Editar Evento</h3>
+                <button
+                    className="modal-close-btn"
+                    onClick={cancelarEdicion}
+                >
+                    &times;
+                </button>
+            </div>
+
+            <div className="modal-body">
+                <form onSubmit={guardarEvento}>
                             <div className="mb-3">
                                 <label htmlFor="edit-nombre" className="form-label">Nombre</label>
                                 <input
@@ -366,58 +362,143 @@ export const Eventos = () => {
                                     required
                                 />
                             </div>
-                            <div className="mb-3">
-                                <label htmlFor="edit-fecha" className="form-label">Fecha Inicio</label>
-                                <input
-                                    type="date"
-                                    className="form-control"
-                                    id="edit-fecha"
-                                    name="fecha"
-                                    value={currentEvent.fecha ? format(new Date(currentEvent.fecha), 'yyyy-MM-dd') : ''}
-                                    onChange={handleInputChange}
-                                    required
-                                />
+
+                            <div className="row mb-3">
+                                <div className="col-md-6">
+                                    <label htmlFor="edit-fecha" className="form-label">Fecha Inicio</label>
+                                    <input
+                                        type="date"
+                                        className="form-control"
+                                        id="edit-fecha"
+                                        name="fecha"
+                                        value={currentEvent.fecha || ''}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="col-md-6">
+                                    <label htmlFor="edit-fecha-final" className="form-label">Fecha Final</label>
+                                    <input
+                                        type="date"
+                                        className="form-control"
+                                        id="edit-fecha-final"
+                                        name="fecha_final"
+                                        value={currentEvent.fecha_final || ''}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </div>
                             </div>
-                            <div className="mb-3">
-                                <label htmlFor="edit-fecha2" className="form-label">Fecha Final</label>
-                                <input
-                                    type="date"
-                                    className="form-control"
-                                    id="edit-fecha2"
-                                    name="fecha2"
-                                    value={currentEvent.fecha_final ? format(new Date(currentEvent.fecha_final), 'yyyy-MM-dd') : ''}
-                                    onChange={handleInputChange}
-                                    required
-                                />
+
+                            <div className="row mb-3">
+                                <div className="col-md-6">
+                                    <label htmlFor="edit-hora" className="form-label">Hora Inicio</label>
+                                    <input
+                                        type="time"
+                                        className="form-control"
+                                        id="edit-hora"
+                                        name="hora"
+                                        value={currentEvent.hora ? currentEvent.hora.substring(0, 5) : ''}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="col-md-6">
+                                    <label htmlFor="edit-hora-final" className="form-label">Hora Final</label>
+                                    <input
+                                        type="time"
+                                        className="form-control"
+                                        id="edit-hora-final"
+                                        name="hora_final"
+                                        value={currentEvent.hora_final ? currentEvent.hora_final.substring(0, 5) : ''}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </div>
                             </div>
 
                             <div className="mb-3">
-                                <label htmlFor="edit-hora" className="form-label">Hora Inicio</label>
-                                <input
-                                    type="time"
-                                    className="form-control"
-                                    id="edit-hora"
-                                    name="hora"
-                                    value={currentEvent.hora ? currentEvent.hora.substring(0, 5) : ''}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-                            <div className="mb-3">
-                                <label htmlFor="edit-hora2" className="form-label">Hora Final</label>
-                                <input
-                                    type="time"
-                                    className="form-control"
-                                    id="edit-hora2"
-                                    name="hora2"
-                                    value={currentEvent.hora_final ? currentEvent.hora_final.substring(0, 5) : ''}
-                                    onChange={handleInputChange}
-                                    required
-                                />
+                                <label className="form-label">Modalidad</label>
+                                <div className="modalidad-options">
+                                    <div className="form-check">
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            name="modalidad"
+                                            id="edit-presencial"
+                                            value="presencial"
+                                            checked={currentEvent.modalidad === 'presencial'}
+                                            onChange={handleInputChange}
+                                            required
+                                        />
+                                        <label className="form-check-label" htmlFor="edit-presencial">
+                                            Presencial
+                                        </label>
+                                    </div>
+                                    <div className="form-check">
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            name="modalidad"
+                                            id="edit-virtual"
+                                            value="virtual"
+                                            checked={currentEvent.modalidad === 'virtual'}
+                                            onChange={handleInputChange}
+                                        />
+                                        <label className="form-check-label" htmlFor="edit-virtual">
+                                            Virtual
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
 
+                            {currentEvent.modalidad === 'presencial' && (
+                                <>
+                                    <div className="mb-3">
+                                        <label htmlFor="edit-ubicacion" className="form-label">Ubicación</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            id="edit-ubicacion"
+                                            name="ubicacion"
+                                            value={currentEvent.ubicacion || currentEvent.lugar || ''}
+                                            onChange={handleInputChange}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="edit-coordenadas" className="form-label">Coordenadas (opcional)</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            id="edit-coordenadas"
+                                            name="coordenadas"
+                                            placeholder="Ej: -16.5000, -68.1500"
+                                            value={currentEvent.coordenadas || ''}
+                                            onChange={handleInputChange}
+                                        />
+                                    </div>
+                                </>
+                            )}
+
+                            {currentEvent.modalidad === 'virtual' && (
+                                <div className="mb-3">
+                                    <label htmlFor="edit-enlace" className="form-label">Enlace Virtual</label>
+                                    <input
+                                        type="url"
+                                        className="form-control"
+                                        id="edit-enlace"
+                                        name="enlace"
+                                        placeholder="https://meet.google.com/xyz-abcd-123"
+                                        value={currentEvent.enlace || ''}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </div>
+                            )}
+
                             <div className="mb-3">
-                                <label htmlFor="edit-tipo" className="form-label">Tipo</label>
+                                <label htmlFor="edit-tipo" className="form-label">Tipo de Evento</label>
                                 <select
                                     className="form-select"
                                     id="edit-tipo"
@@ -446,69 +527,114 @@ export const Eventos = () => {
                                     onChange={handleInputChange}
                                 ></textarea>
                             </div>
-                            <div className="mb-3">
-                                <label className="form-label">Modalidad</label>
-                                <div className="modalidad-options">
-                                    <div className="form-check">
-                                        <input
-                                            className="form-check-input"
-                                            type="radio"
-                                            name="modalidad"
-                                            id="presencial"
-                                            value="presencial"
-                                            checked={newEvent.modalidad === 'presencial'}
-                                            onChange={() => setNewEvent({ ...newEvent, modalidad: 'presencial' })}
-                                            required
-                                        />
-                                        <label className="form-check-label" htmlFor="presencial">
-                                            Presencial
-                                        </label>
-                                    </div>
-                                    <div className="form-check">
-                                        <input
-                                            className="form-check-input"
-                                            type="radio"
-                                            name="modalidad"
-                                            id="virtual"
-                                            value="virtual"
-                                            checked={newEvent.modalidad === 'virtual'}
-                                            onChange={() => setNewEvent({ ...newEvent, modalidad: 'virtual' })}
-                                        />
-                                        <label className="form-check-label" htmlFor="virtual">
-                                            Virtual
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
 
                             <div className="mb-3">
-                                <label htmlFor="edit-ubicacion" className="form-label">Ubicación</label>
+                                <label htmlFor="edit-numero" className="form-label">Número de Contacto</label>
                                 <input
-                                    type="text"
+                                    type="number"
                                     className="form-control"
-                                    id="edit-ubicacion"
-                                    name="ubicacion"
-                                    value={currentEvent.lugar || ''}
+                                    id="edit-numero"
+                                    name="numero"
+                                    value={currentEvent.numero || ''}
                                     onChange={handleInputChange}
                                 />
                             </div>
 
-                            <div className="edit-panel-actions">
-                                <button
-                                    type="button"
-                                    className="btn btn-secondary"
-                                    onClick={cancelarEdicion}
+                            <div className="mb-3">
+                                <label htmlFor="edit-expositor" className="form-label">Expositor</label>
+                                <select
+                                    className="form-select"
+                                    id="edit-expositor"
+                                    name="expositor"
+                                    value={currentEvent.expositor || ''}
+                                    onChange={handleInputChange}
                                 >
-                                    Cancelar
-                                </button>
-                                <button type="submit" className="btn btn-primary">
-                                    Guardar Cambios
-                                </button>
+                                    <option value="">Seleccione un expositor...</option>
+                                    {expositores.map(expositor => (
+                                        <option
+                                            key={expositor.id_expositor}
+                                            value={expositor.id_expositor}
+                                        >
+                                            {expositor.nombre || 'N/A'}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
-                        </form>
+
+                            <div className="mb-3">
+                                <label htmlFor="edit-patrocinador" className="form-label">Patrocinador</label>
+                                <select
+                                    className="form-select"
+                                    id="edit-patrocinador"
+                                    name="patrocinador"
+                                    value={currentEvent.patrocinador || ''}
+                                    onChange={handleInputChange}
+                                >
+                                    <option value="">Seleccione un patrocinador...</option>
+                                    {patrocinadores.map(patrocinador => (
+                                        <option
+                                            key={patrocinador.id_patrocinador}
+                                            value={patrocinador.id_patrocinador}
+                                        >
+                                            {patrocinador.institucion || 'N/A'}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="mb-3">
+                                <label htmlFor="edit-imagen" className="form-label">Imagen del Evento</label>
+                                <input
+                                    type="file"
+                                    className="form-control"
+                                    id="edit-imagen"
+                                    name="imagen"
+                                    accept="image/*"
+                                    onChange={async (e) => {
+                                        const file = e.target.files[0];
+                                        if (file) {
+                                            const imageUrl = await uploadImage(file);
+                                            setCurrentEvent(prev => ({...prev, imagen: imageUrl}));
+                                        }
+                                    }}
+                                />
+                                {currentEvent.imagen && (
+                                    <div className="mt-2">
+                                        <img
+                                            src={currentEvent.imagen}
+                                            alt="Vista previa"
+                                            style={{ maxHeight: '150px' }}
+                                            className="img-thumbnail"
+                                        />
+                                        <button
+                                            type="button"
+                                            className="btn btn-sm btn-danger mt-2"
+                                            onClick={() => setCurrentEvent(prev => ({...prev, imagen: ''}))}
+                                        >
+                                            <i className="bi bi-trash"></i> Eliminar imagen
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="modal-footer">
+                        <button
+                            type="button"
+                            className="btn btn-secondary"
+                            onClick={cancelarEdicion}
+                        >
+                            Cancelar
+                        </button>
+                        <button type="submit" className="btn btn-primary">
+                            Guardar Cambios
+                        </button>
                     </div>
-                </div>
-            )}
+                </form>
+            </div>
+        </div>
+    </div>
+)}
+
             {/* Modal para agregar nuevo evento */}
             {showAddModal && (
                 <div className="modal-overlay">
@@ -574,9 +700,10 @@ export const Eventos = () => {
                                                 type="date"
                                                 className="form-control"
                                                 id="new-fecha-fin"
-                                                name="fecha2"
-                                                value={newEvent.fecha2}
-                                                onChange={(e) => setNewEvent({ ...newEvent, fecha2: e.target.value })}
+                                                name="fecha_final"
+                                                value={newEvent.fecha_final}
+                                                onChange={(e) => setNewEvent({ ...newEvent, fecha_final: e.target.value })}
+                                                required
                                             />
                                         </div>
                                         <div className="col-6">
@@ -585,16 +712,17 @@ export const Eventos = () => {
                                                 type="time"
                                                 className="form-control"
                                                 id="new-hora-fin"
-                                                name="hora2"
-                                                value={newEvent.hora2}
-                                                onChange={(e) => setNewEvent({ ...newEvent, hora2: e.target.value })}
+                                                name="hora_final"
+                                                value={newEvent.hora_final}
+                                                onChange={(e) => setNewEvent({ ...newEvent, hora_final: e.target.value })}
                                                 required
                                             />
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div className='mb-3'>
+
+                            <div className="mb-3">
                                 <label htmlFor="new-expositor" className="form-label">Expositor</label>
                                 <select
                                     className="form-select"
@@ -612,14 +740,11 @@ export const Eventos = () => {
                                             {expositor.nombre || 'N/A'}
                                         </option>
                                     ))}
-                                    <option value="">Añadir...</option>
                                 </select>
                             </div>
 
-
-
-                            <div className='mb-3'>
-                                <label htmlFor="new-expositor" className="form-label">Patrocinador</label>
+                            <div className="mb-3">
+                                <label htmlFor="new-patrocinador" className="form-label">Patrocinador</label>
                                 <select
                                     className="form-select"
                                     id="new-patrocinador"
@@ -636,7 +761,6 @@ export const Eventos = () => {
                                             {patrocinador.institucion || 'N/A'}
                                         </option>
                                     ))}
-                                    <option value="">Añadir...</option>
                                 </select>
                             </div>
 
@@ -648,13 +772,13 @@ export const Eventos = () => {
                                             className="form-check-input"
                                             type="radio"
                                             name="modalidad"
-                                            id="presencial"
+                                            id="new-presencial"
                                             value="presencial"
                                             checked={newEvent.modalidad === 'presencial'}
                                             onChange={() => setNewEvent({ ...newEvent, modalidad: 'presencial' })}
                                             required
                                         />
-                                        <label className="form-check-label" htmlFor="presencial">
+                                        <label className="form-check-label" htmlFor="new-presencial">
                                             Presencial
                                         </label>
                                     </div>
@@ -663,12 +787,12 @@ export const Eventos = () => {
                                             className="form-check-input"
                                             type="radio"
                                             name="modalidad"
-                                            id="virtual"
+                                            id="new-virtual"
                                             value="virtual"
                                             checked={newEvent.modalidad === 'virtual'}
                                             onChange={() => setNewEvent({ ...newEvent, modalidad: 'virtual' })}
                                         />
-                                        <label className="form-check-label" htmlFor="virtual">
+                                        <label className="form-check-label" htmlFor="new-virtual">
                                             Virtual
                                         </label>
                                     </div>
@@ -678,7 +802,7 @@ export const Eventos = () => {
                             {newEvent.modalidad === 'presencial' && (
                                 <>
                                     <div className="mb-3">
-                                        <label htmlFor="new-ubicacion" className="form-label">Ubicación Presencial</label>
+                                        <label htmlFor="new-ubicacion" className="form-label">Ubicación</label>
                                         <input
                                             type="text"
                                             className="form-control"
@@ -695,10 +819,10 @@ export const Eventos = () => {
                                             type="text"
                                             className="form-control"
                                             id="new-coordenadas"
-                                            name="ubicacion2"
+                                            name="coordenadas"
                                             placeholder="Ej: -16.5000, -68.1500"
-                                            value={newEvent.ubicacion2}
-                                            onChange={(e) => setNewEvent({ ...newEvent, ubicacion2: e.target.value })}
+                                            value={newEvent.coordenadas}
+                                            onChange={(e) => setNewEvent({ ...newEvent, coordenadas: e.target.value })}
                                         />
                                     </div>
                                 </>
@@ -719,7 +843,6 @@ export const Eventos = () => {
                                     />
                                 </div>
                             )}
-
 
                             <div className="mb-3">
                                 <label htmlFor="new-tipo" className="form-label">Tipo de Evento</label>
@@ -751,17 +874,19 @@ export const Eventos = () => {
                                     onChange={(e) => setNewEvent({ ...newEvent, descripcion: e.target.value })}
                                 ></textarea>
                             </div>
+
                             <div className="mb-3">
-                                <label htmlFor="new-descripcion" className="form-label">Número de Contacto</label>
+                                <label htmlFor="new-numero" className="form-label">Número de Contacto</label>
                                 <input
-                                    type='number'
+                                    type="number"
                                     className="form-control"
-                                    id="new-descripcion"
+                                    id="new-numero"
                                     name="numero"
                                     value={newEvent.numero}
                                     onChange={(e) => setNewEvent({ ...newEvent, numero: e.target.value })}
-                                ></input>
+                                />
                             </div>
+
                             <div className="mb-3">
                                 <label htmlFor="new-imagen" className="form-label">Imagen del Evento</label>
                                 <input
@@ -806,9 +931,8 @@ export const Eventos = () => {
                         </form>
                     </div>
                 </div>
+            )}
 
-            )
-            }
             <div className="p-4">
                 <h2 className="text-xl font-bold mb-4">Calendario de Eventos</h2>
                 <EventCalendar
@@ -817,6 +941,6 @@ export const Eventos = () => {
                     onSlotSelect={handleSlotSelect}
                 />
             </div>
-        </div >
-    )
-}
+        </div>
+    );
+};

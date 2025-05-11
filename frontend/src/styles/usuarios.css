@@ -33,7 +33,7 @@
   /* Estilos principales para el componente de usuarios */
   .usuarios-container {
     margin-top: 20px;
-    width: 1000px;
+    width: 880px;
     margin-left: -50px;
     display: flex;
     flex-direction: column;
@@ -61,7 +61,7 @@
   .table-responsive {
     border-radius: 6px;
     box-shadow: var(--shadow-sm);
-    width: 1000px; /* Asegura el mismo ancho que el contenedor */
+    width: 800px; /* Asegura el mismo ancho que el contenedor */
   }
   
   .table {
@@ -70,7 +70,7 @@
     font-size: 0.65rem;
     /* Ancho fijo para la tabla */
     table-layout: fixed;
-    width: 1000px; /* Ancho fijo para la tabla */
+    width: 800px; /* Ancho fijo para la tabla */
   }
   
   .table th, .table td {
@@ -100,7 +100,6 @@
     text-transform: uppercase;
     font-size: 0.60rem;
     letter-spacing: 0.5px;
-    position: sticky;
     top: 0;
     z-index: 1;
     height: 10px;
@@ -108,6 +107,20 @@
 
   .table td{
     height: 10px;
+  /* Nuevos estilos para manejar imágenes */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle; /* Alineación vertical centrada */
+  }
+
+  .table td img {
+    max-width: 100%; /* La imagen no excederá el ancho de la celda */
+    width: auto; /* Mantiene la proporción */
+    height: auto; /* Mantiene la proporción */
+    display: block; /* Mejor control del espacio */
+    margin: 0 auto; /* Centra la imagen horizontalmente */
+    object-fit: contain; /* Ajusta la imagen manteniendo proporciones */
   }
   
   .table tbody tr:nth-child(even) {

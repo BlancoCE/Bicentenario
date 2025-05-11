@@ -4,23 +4,24 @@ import '../styles/pruebas.css';
 import { Eventos } from './eventos';
 import { Usuarios } from './Usuarios';
 import { fetchWithAuth } from '../utils/api';
+import { EventTypesChart } from './grafico';
 
 export const Gestionar = () => {
   const [userRole, setUserRole] = useState('ADMINISTRADOR');
   const [activeSection, setActiveSection] = useState('dashboard');
+  const [loadingStats, setLoadingStats] = useState(true);
   const [stats, setStats] = useState({
     users: 0,
     events: 0,
-    comments: 0,
-    resources: 0
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingEventId, setEditingEventId] = useState(null);
   const [currentEvent, setCurrentEvent] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const navigate = useNavigate();
-
 
   // Función para obtener un evento específico por ID
   const fetchEventById = async (id) => {
@@ -41,7 +42,7 @@ export const Gestionar = () => {
     try {
       setLoading(true);
       const data = await fetchWithAuth(`http://localhost:5000/api/rol`);
-      setUserRole(data); // Asume que quieres el primer rol
+      setUserRole(data);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -49,19 +50,37 @@ export const Gestionar = () => {
     }
   };
 
+  const fetchStats = async () => {
+    try {
+      setLoadingStats(true);
+      setError(null);
+      
+      const response = await fetch('http://localhost:5000/api/stats');
+      
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      setStats({
+        users: data.users || 0,
+        events: data.events || 0
+      });
+      
+    } catch (err) {
+      console.error('Error fetching stats:', err);
+      setError(err.message);
+      // Opcional: resetear a valores por defecto
+      setStats({ users: 0, events: 0 });
+    } finally {
+      setLoadingStats(false);
+    }
+  };
+
   // Simular carga de datos
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Datos de ejemplo
-        setStats({
-          users: 0,
-          events: 0,
-          comments: 0,
-          resources: 0
-        });
-
-
         setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -69,9 +88,9 @@ export const Gestionar = () => {
         setLoading(false);
       }
     };
-
     fetchData();
     fetchUserRole();
+    fetchStats();
   }, []);
 
   // Cuando se cambia el evento a editar
@@ -83,7 +102,7 @@ export const Gestionar = () => {
 
   const handleSectionChange = (section) => {
     setActiveSection(section);
-    // Cerrar el panel de edición al cambiar de sección
+    setMobileSidebarOpen(false);
     if (isEditing) {
       setIsEditing(false);
       setEditingEventId(null);
@@ -112,23 +131,34 @@ export const Gestionar = () => {
   }
 
   return (
-    <div className="dashboard-container">
+    <div className={`dashboard-container ${sidebarCollapsed ? 'collapsed' : ''}`}>
       {/* Sidebar */}
-      <nav className="sidebar">
+      <nav className={`sidebar ${sidebarCollapsed ? 'collapsed' : ''} ${mobileSidebarOpen ? 'open' : ''}`}>
+        <button 
+          className="toggle-sidebar"
+          onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+          aria-label={sidebarCollapsed ? 'Expandir menú' : 'Contraer menú'}
+        >
+          {sidebarCollapsed ? '→' : '←'}
+        </button>
+        
         <div className="sidebar-header">
           <h4>Gestión Cultural</h4>
         </div>
+        
         <ul className="sidebar-nav">
           <li className={activeSection === 'dashboard' ? 'active' : ''}>
             <button onClick={() => handleSectionChange('dashboard')}>
-              <i className="bi bi-speedometer2"></i> Dashboard
+              <i className="bi bi-speedometer2"></i>
+              <span>Dashboard</span>
             </button>
           </li>
 
-          {(userRole.rol === 'SUPERADMINISTRADOR' || userRole.rol === 'ADMINISTRADOR' || userRole.rol === 'organizador') && (
+          {(userRole.rol === 'SUPERADMINISTRADOR' || userRole.rol === 'ADMINISTRADOR' || userRole.rol === 'ORGANIZADOR') && (
             <li className={activeSection === 'eventos' ? 'active' : ''}>
               <button onClick={() => handleSectionChange('eventos')}>
-                <i className="bi bi-calendar-event"></i> Eventos
+                <i className="bi bi-calendar-event"></i>
+                <span>Eventos</span>
               </button>
             </li>
           )}
@@ -137,27 +167,36 @@ export const Gestionar = () => {
             <>
               <li className={activeSection === 'usuarios' ? 'active' : ''}>
                 <button onClick={() => handleSectionChange('usuarios')}>
-                  <i className="bi bi-people"></i> Usuarios
+                  <i className="bi bi-people"></i>
+                  <span>Usuarios</span>
                 </button>
               </li>
             </>
           )}
         </ul>
       </nav>
-
+          
       {/* Main Content */}
       <main className="main-content">
+      
         <header className="main-header">
+        
+          {window.innerWidth < 992 && (
+            <button 
+              className="mobile-menu-toggle"
+              onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
+              aria-label="Abrir menú"
+            >
+              ☰
+            </button>
+          )}
+          
           <h1>
-            {activeSection === 'dashboard' && 'Dashboard'}
-            {activeSection === 'historia' && 'Gestión de Historia'}
-            {activeSection === 'cultura' && 'Gestión de Cultura'}
+            {activeSection === 'dashboard' && 'Dashboard'} 
             {activeSection === 'eventos' && 'Gestión de Eventos'}
-            {activeSection === 'biblioteca' && 'Gestión de Biblioteca'}
-            {activeSection === 'noticias' && 'Gestión de Noticias'}
             {activeSection === 'usuarios' && 'Gestión de Usuarios'}
-            {activeSection === 'comentarios' && 'Moderación de Comentarios'}
           </h1>
+          
           <div className="user-actions">
             <button className="btn btn-profile">
               <i className="bi bi-person-circle"></i> Perfil
@@ -167,6 +206,7 @@ export const Gestionar = () => {
             </button>
           </div>
         </header>
+        <div className="content-section">
 
         {/* Contenido principal basado en la sección activa */}
         {activeSection === 'dashboard' && (
@@ -182,57 +222,20 @@ export const Gestionar = () => {
                 <h3>Eventos</h3>
                 <p>{stats.events}</p>
               </div>
-              <div className="stat-card bg-warning">
-                <i className="bi bi-chat-left-text"></i>
-                <h3>Comentarios</h3>
-                <p>{stats.comments}</p>
-              </div>
             </div>
 
             <div className="charts-row">
               <div className="chart-container">
-                <h3>Registro de Usuarios</h3>
-                <div className="chart-placeholder">Gráfico de usuarios</div>
+                <div className="chart-placeholder"><EventTypesChart /></div>
               </div>
-              <div className="chart-container">
-                <h3>Tipos de Eventos</h3>
-                <div className="chart-placeholder">Gráfico de eventos</div>
-              </div>
-            </div>
-
-            <div className="chart-container full-width">
-              <h3>Tráfico del Sitio</h3>
-              <div className="chart-placeholder">Gráfico de tráfico</div>
             </div>
           </div>
         )}
 
-        {activeSection === 'eventos' && (<Eventos/>
-        )}
-        {activeSection === 'usuarios' && (<Usuarios/>
-        )}
-        {/* Otras secciones pueden agregarse aquí */}
-      </main >
-    </div >
+        {activeSection === 'eventos' && <Eventos />}
+        {activeSection === 'usuarios' && <Usuarios />}
+        </div>
+      </main>
+    </div>
   );
 };
-
-// Función auxiliar para determinar el color del badge según el tipo de evento
-function getEventTypeBadge(type) {
-  if (!type) return 'secondary';
-
-  switch (type.toLowerCase()) {
-    case 'cultural':
-      return 'primary';
-    case 'académico':
-    case 'academico':
-    case 'educativo':
-      return 'success';
-    case 'deportivo':
-      return 'warning';
-    case 'social':
-      return 'info';
-    default:
-      return 'secondary';
-  }
-}

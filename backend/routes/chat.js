@@ -124,6 +124,9 @@ const generateResponse = async (question) => {
   Contexto:
   - Base de datos con eventos, expositores y agendas
   - Fechas importantes: 6 de agosto 2025 (acto central)
+
+  Regla:
+  - Si alguien te pide informacion de los eventos tienes que responder de manera ordenada
   
   Pregunta: ${question} [/INST]`;
 
