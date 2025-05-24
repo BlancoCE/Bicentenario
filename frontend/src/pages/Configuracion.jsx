@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { MenuCuenta } from './MenuCuenta';
 import '../styles/configuracion.css';
-import userLogo from '../assets/user-logo.png'
-import { FaEye, FaEyeSlash } from 'react-icons/fa'
+import userLogo from '../assets/user-logo.png';
+import { FaEye, FaEyeSlash, FaSave, FaTimes, FaUpload, FaTrash, FaBars } from 'react-icons/fa';
 import { fetchWithAuth } from '../utils/api';
-
 
 export const Configuracion = () => {
     const [modalOpen, setModalOpen] = useState(false);
@@ -15,15 +15,36 @@ export const Configuracion = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [userData, setUserData] = useState({
         nombre: '',
         correo: '',
-        contraseña: '**********',
         telefono: '',
-        paisCiudad: '',
+        pais: '',
+        ciudad: '',
     });
 
-    // En tu componente Configuracion.js
+    const menuRef = useRef(null);
+    const hamburgerRef = useRef(null);
+    const location = useLocation();
+
+    // Cerrar menú al hacer clic fuera
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (isMenuOpen && 
+                menuRef.current && 
+                !menuRef.current.contains(event.target) && 
+                !hamburgerRef.current.contains(event.target)) {
+                setIsMenuOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isMenuOpen]);
+
     useEffect(() => {
         const obtenerPerfil = async () => {
             try {
@@ -39,7 +60,6 @@ export const Configuracion = () => {
             } catch (err) {
                 setError(err.message);
                 if (err.message.includes('401')) {
-                    // Redirigir a login si el token es inválido
                     localStorage.removeItem('token');
                     window.location.href = '/login';
                 }
@@ -70,9 +90,13 @@ export const Configuracion = () => {
         setEditedValue(userData[field]);
     };
 
-    const handleSave = (field) => {
-        setUserData({ ...userData, [field]: editedValue });
-        setEditField(null);
+    const handleSave = async (field) => {
+        try {
+            setUserData({ ...userData, [field]: editedValue });
+            setEditField(null);
+        } catch (error) {
+            console.error('Error al guardar:', error);
+        }
     };
 
     const handleCancel = () => {
@@ -90,155 +114,351 @@ export const Configuracion = () => {
     const handleUploadPhoto = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setProfilePhoto(URL.createObjectURL(file));
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setProfilePhoto(reader.result);
+            };
+            reader.readAsDataURL(file);
         }
     };
 
     const handleContinue = () => {
-        // Aquí deberías validar el código ingresado por el usuario
-        // Si el código es válido, cierra el modal y establece editField
         closeModal();
         setEditField(modalType);
     };
 
+    const toggleMenu = () => {
+        setIsMenuOpen(!isMenuOpen);
+    };
 
+    if (loading) {
+        return (
+            <div className="profile-container">
+                <div className="loading-spinner">Cargando...</div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="profile-container">
+                <div className="error-message">Error: {error}</div>
+            </div>
+        );
+    }
 
     return (
         <div className="profile-container">
-            <MenuCuenta />
+            {/* Botón hamburguesa para móviles */}
+            <div 
+                ref={hamburgerRef}
+                className="config-hamburger"
+                onClick={toggleMenu}
+            >
+                <FaBars size={20} color="white" />
+            </div>
+
+            {/* Overlay para el menú */}
+            {isMenuOpen && (
+                <div 
+                    className="sidebar-overlay"
+                    onClick={toggleMenu}
+                />
+            )}
+
+            {/* Menú de configuración */}
+            <div 
+                ref={menuRef}
+                className={`sidebar ${isMenuOpen ? 'open' : ''}`}
+            >
+                <MenuCuenta closeMenu={toggleMenu} />
+            </div>
+
+            {/* Contenido principal */}
             <div className="profile-cont">
                 <h1>Tu perfil</h1>
+                
+                {/* Foto de perfil */}
                 <div className="profile-section">
                     <div className="section-title">Foto de perfil</div>
                     <div className="profile-photo">
-                        {profilePhoto ? (
-                            <img src={profilePhoto} alt="Foto de perfil" className="profile-image" />
-                        ) : (
-                            <img src={userLogo} alt="Logo de usuario" className="profile-image" />
-                        )}
+                        <img 
+                            src={profilePhoto || userLogo} 
+                            alt="Foto de perfil" 
+                            className="profile-image" 
+                        />
                         <div className="photo-actions">
-                            <button className="action-button" onClick={handleRemovePhoto}>Eliminar foto</button>
-                            <input type="file" id="upload-photo" accept="image/*" onChange={handleUploadPhoto} style={{ display: 'none' }} />
-                            <label htmlFor="upload-photo" className="action-button">Cambiar foto</label>
+                            <button 
+                                className="action-button danger" 
+                                onClick={handleRemovePhoto}
+                                disabled={!profilePhoto}
+                            >
+                                <FaTrash /> Eliminar foto
+                            </button>
+                            <input 
+                                type="file" 
+                                id="upload-photo" 
+                                accept="image/*" 
+                                onChange={handleUploadPhoto} 
+                                style={{ display: 'none' }} 
+                            />
+                            <label 
+                                htmlFor="upload-photo" 
+                                className="action-button primary"
+                            >
+                                <FaUpload /> Cambiar foto
+                            </label>
                         </div>
                     </div>
                 </div>
+
+                {/* Nombre */}
                 <div className="profile-section">
                     <div className="section-title">Nombre</div>
                     <div className="section-content">
                         {editField === 'nombre' ? (
-                            <>
-                                <input type="text" value={editedValue} onChange={handleChange} />
-                                <button onClick={() => handleSave('nombre')}>Guardar</button>
-                                <button onClick={handleCancel}>Cancelar</button>
-                            </>
-                        ) : (
-                            <>
-                                <div className="field-value">{userData.nombre}</div>
-                                <button className="edit-button" onClick={() => handleEdit('nombre')}>Editar</button>
-                            </>
-                        )}
-                    </div>
-                </div>
-                <div className="profile-section">
-                    <div className="section-title">Correo electrónico</div>
-                    <div className="section-content">
-                        {editField === 'email' ? (
-                            <>
-                                <input type="text" value={editedValue} onChange={handleChange} />
-                                <button onClick={() => handleSave('email')}>Guardar</button>
-                                <button onClick={handleCancel}>Cancelar</button>
-                            </>
-                        ) : (
-                            <>
-                                <div className="field-value">{userData.correo}</div>
-                                <button className="edit-button" onClick={() => openModal('email')}>Editar</button>
-                            </>
-                        )}
-                    </div>
-                </div>
-                <div className="profile-section">
-                    <div className="section-title">Contraseña</div>
-                    <div className="section-content">
-                        {editField === 'password' ? (
-                            <div>
-                                <input type={showPassword ? 'text' : 'password'} value={editedValue} onChange={handleChange} />
-                                <button type="button" onClick={togglePasswordVisibility}>
-                                    {showPassword ? <FaEye /> : <FaEyeSlash />}
-                                </button>
-                                <button onClick={() => handleSave('password')}>Guardar</button>
-                                <button onClick={handleCancel}>Cancelar</button>
+                            <div className="edit-fields">
+                                <input 
+                                    type="text" 
+                                    value={editedValue} 
+                                    onChange={handleChange} 
+                                    placeholder="Ingresa tu nombre"
+                                />
+                                <div className="edit-buttons">
+                                    <button 
+                                        className="action-button primary" 
+                                        onClick={() => handleSave('nombre')}
+                                    >
+                                        <FaSave /> Guardar
+                                    </button>
+                                    <button 
+                                        className="action-button" 
+                                        onClick={handleCancel}
+                                    >
+                                        <FaTimes /> Cancelar
+                                    </button>
+                                </div>
                             </div>
                         ) : (
                             <>
-                                <div className="field-value">**********</div>
-                                <button className="edit-button" onClick={() => openModal('password')}>Cambiar contraseña</button>
+                                <div className="field-value">
+                                    {userData.nombre || 'No especificado'}
+                                </div>
+                                <button 
+                                    className="edit-button" 
+                                    onClick={() => handleEdit('nombre')}
+                                >
+                                    Editar
+                                </button>
                             </>
                         )}
                     </div>
                 </div>
+
+                {/* Correo electrónico */}
+                <div className="profile-section">
+                    <div className="section-title">Correo electrónico</div>
+                    <div className="section-content">
+                        {editField === 'correo' ? (
+                            <div className="edit-fields">
+                                <input 
+                                    type="email" 
+                                    value={editedValue} 
+                                    onChange={handleChange} 
+                                    placeholder="Ingresa tu correo"
+                                />
+                                <div className="edit-buttons">
+                                    <button 
+                                        className="action-button primary" 
+                                        onClick={() => handleSave('correo')}
+                                    >
+                                        <FaSave /> Guardar
+                                    </button>
+                                    <button 
+                                        className="action-button" 
+                                        onClick={handleCancel}
+                                    >
+                                        <FaTimes /> Cancelar
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <>
+                                <div className="field-value">{userData.correo}</div>
+                                <button 
+                                    className="edit-button" 
+                                    onClick={() => openModal('correo')}
+                                >
+                                    Editar
+                                </button>
+                            </>
+                        )}
+                    </div>
+                </div>
+
+                {/* Contraseña */}
+                <div className="profile-section">
+                    <div className="section-title">Contraseña</div>
+                    <div className="section-content">
+                        <div className="field-value">••••••••••</div>
+                        <button 
+                            className="edit-button" 
+                            onClick={() => openModal('password')}
+                        >
+                            Cambiar contraseña
+                        </button>
+                    </div>
+                </div>
+
+                {/* Teléfono */}
                 <div className="profile-section">
                     <div className="section-title">Teléfono</div>
                     <div className="section-content">
                         {editField === 'telefono' ? (
-                            <>
-                                <input type="text" value={editedValue} onChange={handleChange} />
-                                <button onClick={() => handleSave('telefono')}>Guardar</button>
-                                <button onClick={handleCancel}>Cancelar</button>
-                            </>
+                            <div className="edit-fields">
+                                <input 
+                                    type="tel" 
+                                    value={editedValue} 
+                                    onChange={handleChange} 
+                                    placeholder="Ingresa tu teléfono"
+                                />
+                                <div className="edit-buttons">
+                                    <button 
+                                        className="action-button primary" 
+                                        onClick={() => handleSave('telefono')}
+                                    >
+                                        <FaSave /> Guardar
+                                    </button>
+                                    <button 
+                                        className="action-button" 
+                                        onClick={handleCancel}
+                                    >
+                                        <FaTimes /> Cancelar
+                                    </button>
+                                </div>
+                            </div>
                         ) : (
                             <>
-                                <div className="field-value">{userData.telefono}</div>
-                                <button className="edit-button" onClick={() => handleEdit('telefono')}>Editar</button>
+                                <div className="field-value">
+                                    {userData.telefono || 'No especificado'}
+                                </div>
+                                <button 
+                                    className="edit-button" 
+                                    onClick={() => handleEdit('telefono')}
+                                >
+                                    Editar
+                                </button>
                             </>
                         )}
                     </div>
                 </div>
+
+                {/* Ubicación */}
                 <div className="profile-section">
-                    <div className="section-title">País y ciudad</div>
+                    <div className="section-title">Ubicación</div>
                     <div className="section-content">
-                        {editField === 'paisCiudad' ? (
-                            <>
-                                <input type="text" value={editedValue} onChange={handleChange} />
-                                <button onClick={() => handleSave('paisCiudad')}>Guardar</button>
-                                <button onClick={handleCancel}>Cancelar</button>
-                            </>
+                        {editField === 'ubicacion' ? (
+                            <div className="edit-fields">
+                                <input 
+                                    type="text" 
+                                    value={editedValue} 
+                                    onChange={handleChange} 
+                                    placeholder="País"
+                                    style={{ marginBottom: '10px' }}
+                                />
+                                <input 
+                                    type="text" 
+                                    value={editedValue} 
+                                    onChange={handleChange} 
+                                    placeholder="Ciudad"
+                                />
+                                <div className="edit-buttons">
+                                    <button 
+                                        className="action-button primary" 
+                                        onClick={() => handleSave('pais')}
+                                    >
+                                        <FaSave /> Guardar
+                                    </button>
+                                    <button 
+                                        className="action-button" 
+                                        onClick={handleCancel}
+                                    >
+                                        <FaTimes /> Cancelar
+                                    </button>
+                                </div>
+                            </div>
                         ) : (
                             <>
-                                <div className="field-value">{userData.ciudad}, {userData.pais}</div>
-                                <button className="edit-button" onClick={() => handleEdit('paisCiudad')}>Editar</button>
+                                <div className="field-value">
+                                    {userData.ciudad && userData.pais 
+                                        ? `${userData.ciudad}, ${userData.pais}`
+                                        : 'No especificada'}
+                                </div>
+                                <button 
+                                    className="edit-button" 
+                                    onClick={() => handleEdit('ubicacion')}
+                                >
+                                    Editar
+                                </button>
                             </>
                         )}
                     </div>
                 </div>
+
+                {/* Idioma */}
                 <div className="profile-section">
                     <div className="section-title">Idioma</div>
                     <div className="section-content">
                         <select className="type-use">
-                            <option value="estudiante">Español</option>
+                            <option value="es">Español</option>
+                            <option value="en">English</option>
+                            <option value="qu">Quechua</option>
+                            <option value="ay">Aymara</option>
                         </select>
                     </div>
                 </div>
+
                 <div className="use-message">
-                    Estamos personalizando tu experiencia para que se adapte mejor a tus necesidades. Puedes cambiar esta configuración en cualquier momento.
+                    Estamos personalizando tu experiencia para que se adapte mejor a tus necesidades. 
+                    Puedes cambiar esta configuración en cualquier momento.
                 </div>
             </div>
-            {/* Modal */}
+
+            {/* Modal para correo y contraseña */}
             {modalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal">
-                        <button className="modal-close" onClick={closeModal}>X</button>
-                        <h2>{modalType === 'email' ? 'Editar correo electrónico' : 'Editar contraseña'}</h2>
-                        <p>{modalType === 'email' ? 'Para realizar cambios en tu cuenta, deberás introducir el código que te hemos enviado a ejemplo@gmail.com.'
-                            : 'Para realizar el cambio de contraseña, deberás introducir el código que te hemos enviado a ejemplo@gmail.com.'}</p>
-                        <h3 className="modal-resend">Código</h3>
-                        <input type="text" id="code" placeholder="Escribe el código" />
-                        <button className="modal-confirm" onClick={handleContinue}>Continuar</button>
-                        <p className="modal-resend">¿No has recibido código? vuelve a enviarlo en 30 segundos</p>
+                <div className="modal-overlay" onClick={closeModal}>
+                    <div className="verification-modal" onClick={(e) => e.stopPropagation()}>
+                        <h2>
+                            {modalType === 'correo' 
+                                ? 'Cambiar correo electrónico' 
+                                : 'Cambiar contraseña'}
+                        </h2>
+                        <p>
+                            {modalType === 'correo'
+                                ? 'Para cambiar tu correo electrónico, te enviaremos un código de verificación a tu dirección actual.'
+                                : 'Para cambiar tu contraseña, te enviaremos un código de verificación a tu correo electrónico.'}
+                        </p>
+                        
+                        <input 
+                            type="text" 
+                            placeholder="Código de verificación" 
+                            className="verification-input"
+                            maxLength="6"
+                        />
+                        
+                        <button 
+                            className="verification-button" 
+                            onClick={handleContinue}
+                        >
+                            Continuar
+                        </button>
+                        
+                        <p className="verification-resend">
+                            ¿No recibiste el código? <a href="#">Reenviar código</a> (30s)
+                        </p>
                     </div>
                 </div>
             )}
         </div>
-
     );
 };
