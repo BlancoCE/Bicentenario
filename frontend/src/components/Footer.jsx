@@ -17,11 +17,11 @@ export const Footer = () => {
                     <div className="social-icons">
                         <h2>SÍGUENOS</h2>
                         <div className="social-icons-container">
-                            <a href="https://www.facebook.com/" aria-label="Facebook"><FaFacebookF /></a>
-                            <a href="https://www.instagram.com/" aria-label="Instagram"><FaInstagram /></a>
-                            <a href="https://www.xtwitter.com/" aria-label="Twitter"><FaXTwitter /></a>
-                            <a href="https://www.tiktok.com/" aria-label="TikTok"><FaTiktok /></a>
-                            <a href="https://www.youtube.com/" aria-label="YouTube"><FaYoutube /></a>
+                            <a href="https://facebook.com/" aria-label="Facebook"><FaFacebookF /></a>
+                            <a href="https://instagram.com/" aria-label="Instagram"><FaInstagram /></a>
+                            <a href="https://facebook.com/" aria-label="Twitter"><FaXTwitter /></a>
+                            <a href="https://tiktok.com/" aria-label="TikTok"><FaTiktok /></a>
+                            <a href="https://youtube.com/" aria-label="YouTube"><FaYoutube /></a>
                         </div>
                     </div>
                 </div>

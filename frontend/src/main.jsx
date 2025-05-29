@@ -8,7 +8,7 @@ import "./i18n";
 createRoot(document.getElementById('root')).render(
   
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename="/Bicentenario">
       <App />
     </BrowserRouter>
   </StrictMode>,
