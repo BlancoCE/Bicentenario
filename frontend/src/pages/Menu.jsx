@@ -71,8 +71,8 @@ export const Menu = () => {
                         <Link to="/agente">Agente</Link>
                         <Link to="/gestionar">{t("Gestionar")}</Link>
                         <Link to="/contacto">{t("Contacto")}</Link>
-                        <Link to="/menucuenta">{t("Cuenta")}</Link>
-                        <Link onClick={handleLogout} to="/">{t("Cerrar sesión")}</Link>
+                        <Link to="/cuentamenu">{t("Cuenta")}</Link>
+                        {/*<Link onClick={handleLogout} to="/">{t("Cerrar sesión")}</Link>*/}
                     </>
                 )}
             </div>
@@ -88,10 +88,10 @@ export const Menu = () => {
                 ) : (
                     <>
                         <Link to="/agente" onClick={toggleMobileMenu}>Agente</Link>
-                        <Link to="/gestionar" onClick={toggleMobileMenu}>{t("Gestionar")}</Link>
+                        <Link to="/gestionar" onClick={toggleMobileMenu}>{t("Gestionar")}</Link> 
                         <Link to="/contacto" onClick={toggleMobileMenu}>{t("Contacto")}</Link>
-                        <Link to="/configuracion" onClick={toggleMobileMenu}>{t("Configuración")}</Link>
-                        <Link onClick={() => { handleLogout(); toggleMobileMenu(); }} to="/">{t("Cerrar sesión")}</Link>
+                        <Link to="/cuentamenu" onClick={toggleMobileMenu}>{t("Cuenta")}</Link>
+                        {/*<Link onClick={() => { handleLogout(); toggleMobileMenu(); }} to="/">{t("Cerrar sesión")}</Link> */}
                     </>
                 )}
             </div>

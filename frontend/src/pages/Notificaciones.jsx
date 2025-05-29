@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MenuCuenta } from './MenuCuenta';
 import '../styles/notificacion.css';
 import { FaBell, FaRegBell, FaTrashAlt, FaSearch, FaBars } from 'react-icons/fa';
 
@@ -73,30 +72,6 @@ export const Notificacion = () => {
 
     return (
         <div className="notifications-container">
-            {/* Botón hamburguesa para móviles */}
-            <div 
-                ref={hamburgerRef}
-                className={`config-hamburger ${isMenuOpen ? 'open' : ''}`}
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-                <FaBars size={20} color="white" />
-            </div>
-
-            {/* Overlay para el menú */}
-            {isMenuOpen && (
-                <div 
-                    className="menu-overlay"
-                    onClick={() => setIsMenuOpen(false)}
-                />
-            )}
-
-            {/* Menú de configuración */}
-            <div 
-                ref={menuRef}
-                className={`sidebar ${isMenuOpen ? 'open' : ''}`}
-            >
-                <MenuCuenta closeMenu={() => setIsMenuOpen(false)} />
-            </div>
 
             {/* Contenido principal */}
             <div className="notifications-content">

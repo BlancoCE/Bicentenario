@@ -114,13 +114,29 @@ export const Gestionar = () => {
     navigate('/');
   };
 
-  const renderStars = (rating) => {
-    return (
-      <>
-        {'★'.repeat(rating)}{'☆'.repeat(5 - rating)}
-      </>
-    );
-  };
+  useEffect(() => {
+  const handleOutsideClick = (e) => {
+      if (mobileSidebarOpen && !e.target.closest('.sidebar') && !e.target.closest('.mobile-menu-toggle')) {
+        setMobileSidebarOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleOutsideClick);
+    return () => document.removeEventListener('click', handleOutsideClick);
+  }, [mobileSidebarOpen]);
+
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 992);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 992);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+
 
   if (loading) {
     return <div className="loading">Cargando...</div>;
@@ -129,6 +145,7 @@ export const Gestionar = () => {
   if (error) {
     return <div className="error">Error: {error}</div>;
   }
+
 
   return (
     <div className={`dashboard-container ${sidebarCollapsed ? 'collapsed' : ''}`}>
@@ -180,8 +197,8 @@ export const Gestionar = () => {
       <main className="main-content">
       
         <header className="main-header">
-        
-          {window.innerWidth < 992 && (
+
+          {isMobile && (
             <button 
               className="mobile-menu-toggle"
               onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
@@ -207,33 +224,32 @@ export const Gestionar = () => {
           </div>
         </header>
         <div className="content-section">
-
-        {/* Contenido principal basado en la sección activa */}
-        {activeSection === 'dashboard' && (
-          <div className="dashboard-section">
-            <div className="stats-cards">
-              <div className="stat-card bg-primary">
-                <i className="bi bi-people"></i>
-                <h3>Usuarios</h3>
-                <p>{stats.users}</p>
+          {/* Contenido principal basado en la sección activa */}
+          {activeSection === 'dashboard' && (
+            <div className="dashboard-section">
+              <div className="stats-cards">
+                <div className="stat-card bg-primary">
+                  <i className="bi bi-people"></i>
+                  <h3>Usuarios</h3>
+                  <p>{stats.users}</p>
+                </div>
+                <div className="stat-card bg-success">
+                  <i className="bi bi-calendar-event"></i>
+                  <h3>Eventos</h3>
+                  <p>{stats.events}</p>
+                </div>
               </div>
-              <div className="stat-card bg-success">
-                <i className="bi bi-calendar-event"></i>
-                <h3>Eventos</h3>
-                <p>{stats.events}</p>
+
+              <div className="charts-row">
+                <div className="chart-container">
+                  <div className="chart-placeholder"><EventTypesChart /></div>
+                </div>
               </div>
             </div>
+          )}
 
-            <div className="charts-row">
-              <div className="chart-container">
-                <div className="chart-placeholder"><EventTypesChart /></div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeSection === 'eventos' && <Eventos />}
-        {activeSection === 'usuarios' && <Usuarios />}
+          {activeSection === 'eventos' && <Eventos />}
+          {activeSection === 'usuarios' && <Usuarios />}
         </div>
       </main>
     </div>

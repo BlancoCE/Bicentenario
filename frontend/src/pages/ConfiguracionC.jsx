@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { MenuCuenta } from './MenuCuenta';
-import '../styles/configuracion.css';
+import '../styles/configuracionc.css';
 import userLogo from '../assets/user-logo.png';
 import { FaEye, FaEyeSlash, FaSave, FaTimes, FaUpload, FaTrash, FaBars } from 'react-icons/fa';
 import { fetchWithAuth } from '../utils/api';
 
-export const Configuracion = () => {
+export const ConfiguracionC = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [modalType, setModalType] = useState(null);
     const [profilePhoto, setProfilePhoto] = useState(null);
@@ -28,10 +27,11 @@ export const Configuracion = () => {
     const hamburgerRef = useRef(null);
     const location = useLocation();
 
-    // Cerrar menú al hacer clic fuera
+    // Cerrar menú al hacer clic fuera en moviles
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (isMenuOpen && 
+            if (window.innerWidth <= 992 && 
+                isMenuOpen && 
                 menuRef.current && 
                 !menuRef.current.contains(event.target) && 
                 !hamburgerRef.current.contains(event.target)) {
@@ -70,10 +70,6 @@ export const Configuracion = () => {
 
         obtenerPerfil();
     }, []);
-
-    const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword);
-    };
 
     const openModal = (type) => {
         setModalType(type);
@@ -127,17 +123,6 @@ export const Configuracion = () => {
         setEditField(modalType);
     };
 
-    const toggleMenu = () => {
-        setIsMenuOpen(!isMenuOpen);
-    };
-
-    if (loading) {
-        return (
-            <div className="profile-container">
-                <div className="loading-spinner">Cargando...</div>
-            </div>
-        );
-    }
 
     if (error) {
         return (
@@ -149,30 +134,6 @@ export const Configuracion = () => {
 
     return (
         <div className="profile-container">
-            {/* Botón hamburguesa para móviles */}
-            <div 
-                ref={hamburgerRef}
-                className="config-hamburger"
-                onClick={toggleMenu}
-            >
-                <FaBars size={20} color="white" />
-            </div>
-
-            {/* Overlay para el menú */}
-            {isMenuOpen && (
-                <div 
-                    className="sidebar-overlay"
-                    onClick={toggleMenu}
-                />
-            )}
-
-            {/* Menú de configuración */}
-            <div 
-                ref={menuRef}
-                className={`sidebar ${isMenuOpen ? 'open' : ''}`}
-            >
-                <MenuCuenta closeMenu={toggleMenu} />
-            </div>
 
             {/* Contenido principal */}
             <div className="profile-cont">
