@@ -18,3 +18,18 @@ export default defineConfig({
     }
   }
 })
+
+{/*import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+  build: {
+    outDir: 'dist',
+    emptyOutDir: true,
+    // No marcar como externas dependencias necesarias en el bundle
+    rollupOptions: {
+      external: [], // Vacía el array o solo incluye lo realmente necesario
+    }
+  }
+}) */}

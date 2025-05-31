@@ -216,7 +216,7 @@ export const RegisterForm = () => {
                     <ReCAPTCHA ref={captcha} sitekey="6LfF1OkqAAAAAECnyFaS_zNg7p7SvmABCvJScGo8" />
                 </div>
 
-                {errorMessage && <p className="error-message">{errorMessage}</p>}
+                {errorMessage && <p className="error-messages">{errorMessage}</p>}
 
                 <button className="submit" type="submit">
                     {t("Crear Cuenta")}
