@@ -63,7 +63,7 @@ export const Ingreso = () => {
             <form className="form" onSubmit={handleSubmit}>
                 <p className="form-title">Inicia sesión en tu cuenta</p>
 
-                {errorMessage && <p className="error-message">{errorMessage}</p>}
+                {errorMessage && <p className="error-messages">{errorMessage}</p>}
 
                 <div className="input-container">
                     <input 

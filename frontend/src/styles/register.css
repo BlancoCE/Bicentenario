@@ -152,7 +152,7 @@ input::-ms-clear {
     width: 100%;
     height: 60px;
 }
-.error-message {
+.error-messages {
     color: #d32f2f;  /* Rojo fuerte para destacar el error */
     background-color: #ffebee;  /* Fondo rojo claro */
     border: 1px solid #d32f2f;
@@ -162,7 +162,7 @@ input::-ms-clear {
     font-weight: bold;
     text-align: center;
     width: 100%;
-    width: 318px;
+    width: 300px;
     margin: 10px auto;  /* Centra el mensaje */
     margin-top: 30px;
     margin-bottom: 30px;
