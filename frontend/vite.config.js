@@ -3,13 +3,18 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/Bicentenario/', // IMPORTANTE: Reemplaza con el nombre de tu repositorio
-  build: {
-    outDir: 'dist',
-    rollupOptions: {
-      external: ['react-big-calendar', 'date-fns', 'react-i18next'],
-      
+  base: '/Bicentenario/',
+  resolve: {
+    alias: {
+      '@': '/src',
     },
-    emptyOutDir: true
+  },
+  optimizeDeps: {
+    include: ['i18next', 'react-i18next', 'i18next-browser-languagedetector']
+  },
+  build: {
+    commonjsOptions: {
+      include: [/i18next/, /node_modules/]
+    }
   }
 })
