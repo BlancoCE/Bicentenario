@@ -10,7 +10,7 @@ const app = express();
 app.use(express.json({ limit: '10mb' }));
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://tu-usuario.github.io'] // Cambia por tu URL de GitHub Pages
+    ? ['https://joax2020.github.io'] // Cambia por tu URL de GitHub Pages
     : ['http://localhost:3000', 'http://127.0.0.1:5500'],
   credentials: true
 }));
