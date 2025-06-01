@@ -26,7 +26,7 @@ export const Gestionar = () => {
   // Función para obtener un evento específico por ID
   const fetchEventById = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/eventos/${id}`);
+      const response = await fetch(`https://bicentenario-production.up.railway.app/api/eventos/${id}`);
       if (!response.ok) {
         throw new Error('Error al obtener el evento');
       }
@@ -41,7 +41,7 @@ export const Gestionar = () => {
   const fetchUserRole = async () => {
     try {
       setLoading(true);
-      const data = await fetchWithAuth(`http://localhost:5000/api/rol`);
+      const data = await fetchWithAuth(`https://bicentenario-production.up.railway.app/api/rol`);
       setUserRole(data);
     } catch (err) {
       setError(err.message);
@@ -55,7 +55,7 @@ export const Gestionar = () => {
       setLoadingStats(true);
       setError(null);
       
-      const response = await fetch('http://localhost:5000/api/stats');
+      const response = await fetch('https://bicentenario-production.up.railway.app/api/stats');
       
       if (!response.ok) {
         throw new Error(`Error ${response.status}: ${response.statusText}`);

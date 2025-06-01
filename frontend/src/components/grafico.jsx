@@ -15,7 +15,7 @@ export const EventTypesChart = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/tipo/evento');
+        const response = await fetch('https://bicentenario-production.up.railway.app/api/tipo/evento');
         
         if (!response.ok) {
           throw new Error(`Error HTTP: ${response.status}`);

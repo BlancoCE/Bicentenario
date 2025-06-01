@@ -44,21 +44,21 @@ export const Eventos = () => {
 
     const fetchEvents = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/eventos');
+            const response = await fetch('https://bicentenario-production.up.railway.app/api/eventos');
             if (!response.ok) {
                 throw new Error('Error al obtener los eventos');
             }
             const data = await response.json();
             setEvents(data);
 
-            const response2 = await fetch('http://localhost:5000/api/expositores');
+            const response2 = await fetch('https://bicentenario-production.up.railway.app/api/expositores');
             if (!response2.ok) {
                 throw new Error('Error al obtener los expositores');
             }
             const data2 = await response2.json();
             setExpositores(data2);
 
-            const response3 = await fetch('http://localhost:5000/api/patrocinadores');
+            const response3 = await fetch('https://bicentenario-production.up.railway.app/api/patrocinadores');
             if (!response3.ok) {
                 throw new Error('Error al obtener los patrocinadores');
             }
@@ -116,7 +116,7 @@ export const Eventos = () => {
                 enlace: currentEvent.modalidad === 'virtual' ? currentEvent.enlace : null
             };
 
-            const response = await fetch(`http://localhost:5000/api/eventos/${editingEventId}`, {
+            const response = await fetch(`https://bicentenario-production.up.railway.app/api/eventos/${editingEventId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -162,7 +162,7 @@ export const Eventos = () => {
         if (!window.confirm('¿Está seguro que desea eliminar este evento?')) return;
 
         try {
-            const response = await fetch(`http://localhost:5000/api/eventos/${id}`, {
+            const response = await fetch(`https://bicentenario-production.up.railway.app/api/eventos/${id}`, {
                 method: 'DELETE'
             });
 
@@ -188,7 +188,7 @@ export const Eventos = () => {
     const crearEvento = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://localhost:5000/api/eventos', {
+            const response = await fetch('https://bicentenario-production.up.railway.app/api/eventos', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -19,7 +19,7 @@ export const Eventos = () => {
 
     const fetchEvents = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/eventos');
+            const response = await fetch('https://bicentenario-production.up.railway.app/api/eventos');
             if (!response.ok) {
                 throw new Error('Error al obtener los eventos');
             }
@@ -34,7 +34,7 @@ export const Eventos = () => {
     const fetchSubscribedEvents = async () => {
         try {
             setLoadingSubscriptions(true);
-            const data = await fetchWithAuth('http://localhost:5000/api/suscrito');
+            const data = await fetchWithAuth('https://bicentenario-production.up.railway.app/api/suscrito');
 
             setSubscribedEvents(data.map(item => item.id_evento));
         } catch (err) {
@@ -47,7 +47,7 @@ export const Eventos = () => {
     const subscribeEvent = async (event) => {
         try {
             if(localStorage.getItem('token')){
-                const data = await postWithAuth('http://localhost:5000/api/subscribirse', { 
+                const data = await postWithAuth('https://bicentenario-production.up.railway.app/api/subscribirse', { 
                     id_evento: event.id_evento 
                 });
                 

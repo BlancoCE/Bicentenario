@@ -15,17 +15,17 @@ export const Usuarios = () => {
             setLoading(true);
             
             // Obtener usuarios
-            const usersResponse = await fetch('http://localhost:5000/api/usuarios');
+            const usersResponse = await fetch('https://bicentenario-production.up.railway.app/api/usuarios');
             if (!usersResponse.ok) throw new Error('Error al obtener usuarios');
             const usersData = await usersResponse.json();
             
             // Obtener roles
-            const rolesResponse = await fetch('http://localhost:5000/api/roles');
+            const rolesResponse = await fetch('https://bicentenario-production.up.railway.app/api/roles');
             if (!rolesResponse.ok) throw new Error('Error al obtener roles');
             const rolesData = await rolesResponse.json();
             
             // Obtener rol del usuario actual
-            const currentUserResponse = await fetchWithAuth('http://localhost:5000/api/rol');
+            const currentUserResponse = await fetchWithAuth('https://bicentenario-production.up.railway.app/api/rol');
 
             setUsers(usersData);
             setRoles(rolesData);
@@ -40,7 +40,7 @@ export const Usuarios = () => {
     // Cambiar rol de usuario
     const handleRoleChange = async (userId, newRole) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/usuarios/${userId}/rol`, {
+            const response = await fetch(`https://bicentenario-production.up.railway.app/api/usuarios/${userId}/rol`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

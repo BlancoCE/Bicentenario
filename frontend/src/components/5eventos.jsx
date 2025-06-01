@@ -16,7 +16,7 @@ const EventCarousel = () => {
 
   const fetch5Events = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/5eventos');
+      const response = await fetch('https://bicentenario-production.up.railway.app/api/5eventos');
       if (!response.ok) {
         throw new Error('Error al obtener los eventos');
       }

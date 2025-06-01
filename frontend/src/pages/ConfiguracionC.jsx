@@ -49,7 +49,7 @@ export const ConfiguracionC = () => {
         const obtenerPerfil = async () => {
             try {
                 setLoading(true);
-                const data = await fetchWithAuth('http://localhost:5000/api/usuario/perfil');
+                const data = await fetchWithAuth('https://bicentenario-production.up.railway.app/api/usuario/perfil');
                 setUserData({
                     nombre: data.nombre || 'NOMBRE DE USUARIO',
                     correo: data.correo || 'ejemplo@gmail.com',

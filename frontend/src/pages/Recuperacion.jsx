@@ -14,7 +14,7 @@ export const Recuperacion = () => {
         }
 
         try {
-            const response = await fetch("http://localhost:5000/api/recover-password", {
+            const response = await fetch("https://bicentenario-production.up.railway.app/api/recover-password", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ correo }),

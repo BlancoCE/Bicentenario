@@ -41,7 +41,7 @@ export const Inicio = () => {
 
   const fetchEvents = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/eventos');
+      const response = await fetch('https://bicentenario-production.up.railway.app/api/eventos');
       if (!response.ok) {
         throw new Error('Error al obtener los eventos');
       }
@@ -115,7 +115,7 @@ export const Inicio = () => {
       </div>
       <EventCarousel />
       <div className="calendar-section">
-        <h2 className="calendar-title">Calendario de Eventos</h2>
+        <h2 className="calendar-title">Calendario de Eventos para el Bicentenario</h2>
         <EventCalendar
           events={formattedEvents}
           onEventSelect={handleEventSelect}

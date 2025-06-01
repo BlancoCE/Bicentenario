@@ -9,7 +9,7 @@ export const ConfirmarCuenta = () => {
     useEffect(() => {
         const confirmarRegistro = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/api/confirmar/${token}`);
+                const response = await fetch(`https://bicentenario-production.up.railway.app/api/confirmar/${token}`);
                 const data = await response.json();
 
                 if (response.ok) {
