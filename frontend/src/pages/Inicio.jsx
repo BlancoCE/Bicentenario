@@ -115,7 +115,7 @@ export const Inicio = () => {
       </div>
       <EventCarousel />
       <div className="calendar-section">
-        <h2 className="calendar-title">Calendario de Eventos para el Bicentenario</h2>
+        <h2 className="calendar-title">Calendario de Eventos</h2>
         <EventCalendar
           events={formattedEvents}
           onEventSelect={handleEventSelect}

@@ -19,7 +19,15 @@ export const AppRouter = () => {
             <Route path='/' element={<Inicio />} />
             <Route path='/register' element={<Register />} />
             <Route path='/contacto' element={<Contacto />} />
-            <Route path="/confirmar/:token" element={<ConfirmarCuenta />} />
+            <Route 
+  path="/confirmar/:token" 
+  element={<ConfirmarCuenta />} 
+  loader={({ params }) => {
+    // Verifica que el token llegue correctamente
+    console.log("Token recibido:", params.token);
+    return null;
+  }}
+/>
             <Route path="/login" element={<Acceso />} />
             <Route path="/recuperacion" element={<Recuperacion />} />
             <Route path="/reset-password/:token" element={<ResetPassword />} />
