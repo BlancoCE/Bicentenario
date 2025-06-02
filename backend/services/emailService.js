@@ -1,7 +1,7 @@
 const transporter = require("../config/email");
 
 const sendConfirmationEmail = async (email, token) => {
-    const confirmLink = `${process.env.FRONTEND_URL}/confirmar/${token}`;
+    const confirmLink = `${process.env.FRONTEND_URL}/#/confirmar/${token}`;
     const mailOptions = {
         from: process.env.EMAIL_USER,
         to: email,
