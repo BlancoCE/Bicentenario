@@ -8,7 +8,7 @@ import "./i18n";
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <HashRouter>
+    <HashRouter basename='/'>
       <App />
     </HashRouter>
   </StrictMode>,

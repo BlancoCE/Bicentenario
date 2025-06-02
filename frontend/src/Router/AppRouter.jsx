@@ -12,10 +12,12 @@ import { Agente } from '../components/Agente';
 import { Gestionar } from '../components/Gestionar';
 import { Eventos } from '../pages/allevents';
 import { Notificacion } from '../pages/Notificaciones';
+import { EventRegister} from '../pages/eventregister';
 
 export const AppRouter = () => {
     return (
         <Routes>
+            <Route path='/inicio' element={<Inicio/>}/>
             <Route path='/' element={<Inicio />} />
             <Route path='/register' element={<Register />} />
             <Route path='/contacto' element={<Contacto />} />
@@ -41,6 +43,7 @@ export const AppRouter = () => {
             
             <Route path='/agente' element={<Agente/>}/>
             <Route path='/eventos' element={<Eventos/>}/>
+            <Route path='/eventos/:eventId/register' element={<EventRegister/>}/>
             <Route path='/gestionar' element={<Gestionar />} />
             <Route path='/*' element={<Navigate to="/" />} />
             

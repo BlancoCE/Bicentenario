@@ -300,6 +300,9 @@ export const Eventos = () => {
                             {loadingSubscriptions ? 'Cargando...' : 
                              isSubscribed(selectedEvent.id_evento) ? 'Suscrito ✓' : t('eventos.suscribirse')}
                         </button>
+                        <button className='QR'>
+                            Generar QR
+                        </button>
                     </div>
                     </div>
                 </div>

@@ -39,9 +39,7 @@ export const Ingreso = () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
             });
-
             const data = await response.json();
-
             if (!response.ok) {
                 setErrorMessage(data.error);
                 return;
@@ -49,7 +47,7 @@ export const Ingreso = () => {
 
             localStorage.setItem("token", data.token); // 🔹 Guardar token en localStorage
 
-            navigate("/"); // 🔹 Redirigir al inicio
+            navigate("/#/inicio"); // 🔹 Redirigir al inicio
             window.location.reload();
 
         } catch (error) {
@@ -100,10 +98,10 @@ export const Ingreso = () => {
                 </button>
 
                 <p className="signup-link">
-                    ¿Sin cuenta? <Link to="/register">Registrarse</Link>
+                    ¿Sin cuenta? <Link to="/#/register">Registrarse</Link>
                 </p>
                 <p className="signup-link2">
-                    <Link to="/recuperacion">Me olvide mi contraseña</Link>
+                    <Link to="/#/recuperacion">Me olvide mi contraseña</Link>
                 </p>
             </form>
         </main>

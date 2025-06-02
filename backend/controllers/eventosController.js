@@ -54,7 +54,7 @@ const geteventoe = async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ message: "Evento no encontrado" });
     }
-
+    console.log(result);
     res.json(result.rows[0]);
   } catch (error) {
     console.error("Error al obtener el evento:", error);
@@ -268,6 +268,57 @@ const subscribirse = async (req, res) => {
   }
 };
 
+const registerToEvent = async (req, res) => {
+    const { eventId } = req.params;
+     const token = req.headers.authorization?.split(' ')[1];
+        if (!token) {
+          return res.status(401).json({ message: "No autorizado" });
+        }
+    
+        // Verificar y decodificar el token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const userId = decoded.id; // Asume que el token contiene el ID del usuario
+
+    try {
+
+        // 1. Verificar que el usuario no esté ya registrado
+        const existingRegistration = await pool.query(
+            'SELECT * FROM participantes_eventos WHERE id_evento = $1 AND id_usuario = $2',
+            [eventId, userId]
+        );
+
+        if (existingRegistration.rows.length > 0) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Ya estás registrado en este evento' 
+            });
+        }
+
+        // 4. Registrar al usuario en el evento
+        const registration = await pool.query(
+            `INSERT INTO participantes_eventos 
+            (id_evento, id_usuario) 
+            VALUES ($1, $2) 
+            RETURNING *`,
+            [eventId, userId]
+        );
+
+        res.status(201).json({
+            success: true,
+            message: 'Registro exitoso',
+            registration: registration.rows[0],
+        });
+
+    } catch (error) {
+        console.error('Error en el registro al evento:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Error interno del servidor',
+            error: error.message 
+        });
+    }
+};
+
 // En tu controlador (ej. eventosController.js)
 const getEventosPorTipo = async (req, res) => {
   try {
@@ -301,4 +352,5 @@ module.exports = {
   get5eventos,
   subscribirse,
   getEventosPorTipo,
+  registerToEvent,
 };

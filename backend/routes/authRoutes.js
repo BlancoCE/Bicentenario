@@ -1,10 +1,13 @@
 const express = require("express");
 const { register, login, confirmAccount, recoverPassword, resetPassword } = require("../controllers/authController");
-const { getEventosPorTipo, subscribirse, geteventos, get5eventos, geteventoe, postevento, putevento, deleteevento, getexpositores, getpatrocinadores} = require("../controllers/eventosController");
+const { registerToEvent, getEventosPorTipo, subscribirse, geteventos, get5eventos, geteventoe, postevento, putevento, deleteevento, getexpositores, getpatrocinadores} = require("../controllers/eventosController");
 const {getperfil, getusuarios, getrol, getroles, putrol, suscrito} = require("../controllers/usuarioController");
 const { getstats } = require("../controllers/statsController");
+const { generarQR } = require("../services/QRService")
 const router = express.Router();
 
+router.post("/eventos/:eventId/register", registerToEvent);
+router.get("/eventos/:id/qr", generarQR);
 router.post("/register", register);
 router.post("/login", login);
 router.get("/confirmar/:token", confirmAccount);

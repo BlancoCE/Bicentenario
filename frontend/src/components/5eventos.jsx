@@ -12,6 +12,9 @@ const EventCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [expandedDescription, setExpandedDescription] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [qrCode, setQrCode] = useState(null);
+  const [showQrModal, setShowQrModal] = useState(false);
+  const [qrLoading, setQrLoading] = useState(false);
   const navigate = useNavigate();
 
   const fetch5Events = async () => {
@@ -29,27 +32,64 @@ const EventCarousel = () => {
 
   const subscribeEvent = async (event) => {
     try {
-      const data = await postWithAuth('http://localhost:5000/api/subscribirse', event);
-      return data; // Retorna los datos para que el componente pueda usarlos
+      const data = await postWithAuth('https://bicentenario-production.up.railway.app/api/subscribirse', event);
+      return data;
     } catch (err) {
       console.error('Error en subscribeEvent:', err.message);
       
-      // Puedes personalizar el mensaje de error según el tipo de error
       const errorMessage = err.response?.status === 409 
         ? 'Ya estás suscrito a este evento' 
         : 'Error al suscribirse al evento';
       
-      throw new Error(errorMessage); // Re-lanza el error para manejo en el componente
+      throw new Error(errorMessage);
     }
   };
 
+  // Nueva función para generar el QR
+  const generateQR = async (eventId) => {
+    setQrLoading(true);
+    try {
+      const response = await fetch(`https://bicentenario-production.up.railway.app/api/eventos/${eventId}/qr`);
+      if (!response.ok) {
+        throw new Error('Error al generar el código QR');
+      }
+      const qrSvg = await response.text();
+      setQrCode(qrSvg);
+      setShowQrModal(true);
+    } catch (err) {
+      console.error('Error generando QR:', err.message);
+      alert('Error al generar el código QR');
+    } finally {
+      setQrLoading(false);
+    }
+  };
+
+  // Función para cerrar el modal del QR
+  const closeQrModal = () => {
+    setShowQrModal(false);
+    setQrCode(null);
+  };
+
+  // Función para descargar el QR como imagen
+  const downloadQR = () => {
+    if (!qrCode || !selectedEvent) return;
+    
+    const blob = new Blob([qrCode], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `QR-${selectedEvent.nombre.replace(/\s+/g, '-')}.svg`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   useEffect(() => {
     fetch5Events();
   }, []);
 
   useEffect(() => {
-    // Reset expandedDescription when changing events
     setExpandedDescription(false);
   }, [currentIndex]);
 
@@ -65,18 +105,16 @@ const EventCarousel = () => {
 
   const closeEventDetails = () => {
     setSelectedEvent(null);
+    // También cerrar el modal QR si está abierto
+    if (showQrModal) {
+      closeQrModal();
+    }
   };
 
   const isEventPast = (event) => {
-    // Extraer solo la parte de la fecha (sin hora)
-    const fechaPart = event.fecha.split('T')[0]; // "2025-04-09"
-
-    // Combinar con la hora del evento
-    const fechaHoraString = `${fechaPart}T${event.hora}`; // "2025-04-09T11:00:00"
-
-    // Parsear considerando la zona horaria local
+    const fechaPart = event.fecha.split('T')[0];
+    const fechaHoraString = `${fechaPart}T${event.hora}`;
     const eventDate = parseISO(fechaHoraString);
-
     return isBefore(eventDate, new Date());
   };
 
@@ -90,14 +128,12 @@ const EventCarousel = () => {
     setExpandedDescription(!expandedDescription);
   };
 
-  // Función para mostrar el texto completo o truncado
   const getDisplayText = (text, maxLength) => {
     if (!text) return 'Descripción no disponible';
     if (text.length <= maxLength || expandedDescription) return text;
     return `${text.substring(0, maxLength)}...`;
   };
 
-  // Renderizar un evento vacío si no hay eventos
   const renderEmptyEvent = () => (
     <div className="event-card">
       <div className="event-image-container">
@@ -121,7 +157,6 @@ const EventCarousel = () => {
     </div>
   );
 
-  // Renderizar un evento actual si hay eventos
   const renderCurrentEvent = () => {
     const currentEvent = events[currentIndex];
     const description = currentEvent.descripcion || 'Descripción no disponible';
@@ -202,11 +237,11 @@ const EventCarousel = () => {
           ))}
         </div>
       </div>
+
+      {/* Modal de detalles del evento */}
       {selectedEvent && (
         <div className="evento-modal">
           <div className="evento-modal-content">
-
-
             <div className="modal-header">
               <button className="close-modal" onClick={closeEventDetails}>×</button>
               <img
@@ -249,6 +284,44 @@ const EventCarousel = () => {
                 disabled={isEventPast(selectedEvent)}
               >
                 {t('eventos.suscribirse')}
+              </button>
+              <button 
+                className={`QR ${qrLoading ? 'loading' : ''}`}
+                onClick={() => generateQR(selectedEvent.id_evento)}
+                disabled={qrLoading}
+              >
+                {qrLoading ? 'Generando...' : 'Generar QR'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal del código QR */}
+      {showQrModal && (
+        <div className="qr-modal">
+          <div className="qr-modal-content">
+            <div className="qr-modal-header">
+              <h3>Código QR</h3>
+              <button className="close-qr-modal" onClick={closeQrModal}>×</button>
+            </div>
+            <div className="qr-modal-body">
+              {qrCode && (
+                <div 
+                  className="qr-code-container"
+                  dangerouslySetInnerHTML={{ __html: qrCode }}
+                />
+              )}
+              <p className="qr-description">
+                Escanea este código QR para acceder directamente al registro del evento
+              </p>
+            </div>
+            <div className="qr-modal-footer">
+              <button className="btn-download-qr" onClick={downloadQR}>
+                Descargar QR
+              </button>
+              <button className="btn-close-qr" onClick={closeQrModal}>
+                Cerrar
               </button>
             </div>
           </div>
