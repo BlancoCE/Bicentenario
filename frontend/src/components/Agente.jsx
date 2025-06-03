@@ -67,7 +67,7 @@ export const Agente = () => {
   const getBotResponse = async (userInput) => {
     try {
       const response = await axios.post(
-        'http://localhost:5000/api/chat', // Ruta completa
+        'https://bicentenario-production.up.railway.app/api/chat', // Ruta completa
         { question: userInput },
         {
           headers: { 'Content-Type': 'application/json' }

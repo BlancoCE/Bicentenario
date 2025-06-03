@@ -47,13 +47,9 @@ const EventCarousel = () => {
 
   // Nueva función para generar el QR
   const generateQR = async (eventId) => {
-    console.error("a1");
     setQrLoading(true);
-    alert("a2");
     try {
-      alert("a");
       const response = await fetch(`https://bicentenario-production.up.railway.app/api/eventos/${eventId}/qr`);
-      alert("b");
       if (!response.ok) {
         throw new Error('Error al generar el código QR');
       }

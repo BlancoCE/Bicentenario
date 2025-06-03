@@ -315,7 +315,7 @@ export const Eventos = () => {
                                         >
                                             <i className="bi bi-pencil"></i> Editar
                                         </button>
-                                        </td><td>
+                                    </td><td>
                                         <button
                                             className="btn btn-sm btn-danger"
                                             onClick={() => eliminarEvento(event.id_evento || event.id)}
@@ -335,305 +335,305 @@ export const Eventos = () => {
             </div>
 
             {/* Modal de edición de eventos */}
-{isEditing && currentEvent && (
-    <div className="modal-backdrop">
-        <div className="modal-container">
-            <div className="modal-header">
-                <h3>Editar Evento</h3>
-                <button
-                    className="modal-close-btn"
-                    onClick={cancelarEdicion}
-                >
-                    &times;
-                </button>
-            </div>
+            {isEditing && currentEvent && (
+                <div className="modal-backdrop">
+                    <div className="modal-container">
+                        <div className="modal-header">
+                            <h3>Editar Evento</h3>
+                            <button
+                                className="modal-close-btn"
+                                onClick={cancelarEdicion}
+                            >
+                                &times;
+                            </button>
+                        </div>
 
-            <div className="modal-body">
-                <form onSubmit={guardarEvento}>
-                            <div className="mb-3">
-                                <label htmlFor="edit-nombre" className="form-label">Nombre</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    id="edit-nombre"
-                                    name="nombre"
-                                    value={currentEvent.nombre || ''}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-
-                            <div className="row mb-3">
-                                <div className="col-md-6">
-                                    <label htmlFor="edit-fecha" className="form-label">Fecha Inicio</label>
-                                    <input
-                                        type="date"
-                                        className="form-control"
-                                        id="edit-fecha"
-                                        name="fecha"
-                                        value={currentEvent.fecha || ''}
-                                        onChange={handleInputChange}
-                                        required
-                                    />
-                                </div>
-                                <div className="col-md-6">
-                                    <label htmlFor="edit-fecha-final" className="form-label">Fecha Final</label>
-                                    <input
-                                        type="date"
-                                        className="form-control"
-                                        id="edit-fecha-final"
-                                        name="fecha_final"
-                                        value={currentEvent.fecha_final || ''}
-                                        onChange={handleInputChange}
-                                        required
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="row mb-3">
-                                <div className="col-md-6">
-                                    <label htmlFor="edit-hora" className="form-label">Hora Inicio</label>
-                                    <input
-                                        type="time"
-                                        className="form-control"
-                                        id="edit-hora"
-                                        name="hora"
-                                        value={currentEvent.hora ? currentEvent.hora.substring(0, 5) : ''}
-                                        onChange={handleInputChange}
-                                        required
-                                    />
-                                </div>
-                                <div className="col-md-6">
-                                    <label htmlFor="edit-hora-final" className="form-label">Hora Final</label>
-                                    <input
-                                        type="time"
-                                        className="form-control"
-                                        id="edit-hora-final"
-                                        name="hora_final"
-                                        value={currentEvent.hora_final ? currentEvent.hora_final.substring(0, 5) : ''}
-                                        onChange={handleInputChange}
-                                        required
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="mb-3">
-                                <label className="form-label">Modalidad</label>
-                                <div className="modalidad-options">
-                                    <div className="form-check">
-                                        <input
-                                            className="form-check-input"
-                                            type="radio"
-                                            name="modalidad"
-                                            id="edit-presencial"
-                                            value="presencial"
-                                            checked={currentEvent.modalidad === 'presencial'}
-                                            onChange={handleInputChange}
-                                            required
-                                        />
-                                        <label className="form-check-label" htmlFor="edit-presencial">
-                                            Presencial
-                                        </label>
-                                    </div>
-                                    <div className="form-check">
-                                        <input
-                                            className="form-check-input"
-                                            type="radio"
-                                            name="modalidad"
-                                            id="edit-virtual"
-                                            value="virtual"
-                                            checked={currentEvent.modalidad === 'virtual'}
-                                            onChange={handleInputChange}
-                                        />
-                                        <label className="form-check-label" htmlFor="edit-virtual">
-                                            Virtual
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {currentEvent.modalidad === 'presencial' && (
-                                <>
-                                    <div className="mb-3">
-                                        <label htmlFor="edit-ubicacion" className="form-label">Ubicación</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            id="edit-ubicacion"
-                                            name="ubicacion"
-                                            value={currentEvent.ubicacion || currentEvent.lugar || ''}
-                                            onChange={handleInputChange}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="mb-3">
-                                        <label htmlFor="edit-coordenadas" className="form-label">Coordenadas (opcional)</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            id="edit-coordenadas"
-                                            name="coordenadas"
-                                            placeholder="Ej: -16.5000, -68.1500"
-                                            value={currentEvent.coordenadas || ''}
-                                            onChange={handleInputChange}
-                                        />
-                                    </div>
-                                </>
-                            )}
-
-                            {currentEvent.modalidad === 'virtual' && (
+                        <div className="modal-body">
+                            <form onSubmit={guardarEvento}>
                                 <div className="mb-3">
-                                    <label htmlFor="edit-enlace" className="form-label">Enlace Virtual</label>
+                                    <label htmlFor="edit-nombre" className="form-label">Nombre</label>
                                     <input
-                                        type="url"
+                                        type="text"
                                         className="form-control"
-                                        id="edit-enlace"
-                                        name="enlace"
-                                        placeholder="https://meet.google.com/xyz-abcd-123"
-                                        value={currentEvent.enlace || ''}
+                                        id="edit-nombre"
+                                        name="nombre"
+                                        value={currentEvent.nombre || ''}
                                         onChange={handleInputChange}
                                         required
                                     />
                                 </div>
-                            )}
 
-                            <div className="mb-3">
-                                <label htmlFor="edit-tipo" className="form-label">Tipo de Evento</label>
-                                <select
-                                    className="form-select"
-                                    id="edit-tipo"
-                                    name="tipo"
-                                    value={currentEvent.tipo || ''}
-                                    onChange={handleInputChange}
-                                    required
-                                >
-                                    <option value="">Seleccione un tipo</option>
-                                    <option value="Cultural">Cultural</option>
-                                    <option value="Académico">Académico</option>
-                                    <option value="Deportivo">Deportivo</option>
-                                    <option value="Social">Social</option>
-                                    <option value="Otro">Otro</option>
-                                </select>
-                            </div>
-
-                            <div className="mb-3">
-                                <label htmlFor="edit-descripcion" className="form-label">Descripción</label>
-                                <textarea
-                                    className="form-control"
-                                    id="edit-descripcion"
-                                    name="descripcion"
-                                    rows="3"
-                                    value={currentEvent.descripcion || ''}
-                                    onChange={handleInputChange}
-                                ></textarea>
-                            </div>
-
-                            <div className="mb-3">
-                                <label htmlFor="edit-numero" className="form-label">Número de Contacto</label>
-                                <input
-                                    type="number"
-                                    className="form-control"
-                                    id="edit-numero"
-                                    name="numero"
-                                    value={currentEvent.numero || ''}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-
-                            <div className="mb-3">
-                                <label htmlFor="edit-expositor" className="form-label">Expositor</label>
-                                <select
-                                    className="form-select"
-                                    id="edit-expositor"
-                                    name="expositor"
-                                    value={currentEvent.expositor || ''}
-                                    onChange={handleInputChange}
-                                >
-                                    <option value="">Seleccione un expositor...</option>
-                                    {expositores.map(expositor => (
-                                        <option
-                                            key={expositor.id_expositor}
-                                            value={expositor.id_expositor}
-                                        >
-                                            {expositor.nombre || 'N/A'}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div className="mb-3">
-                                <label htmlFor="edit-patrocinador" className="form-label">Patrocinador</label>
-                                <select
-                                    className="form-select"
-                                    id="edit-patrocinador"
-                                    name="patrocinador"
-                                    value={currentEvent.patrocinador || ''}
-                                    onChange={handleInputChange}
-                                >
-                                    <option value="">Seleccione un patrocinador...</option>
-                                    {patrocinadores.map(patrocinador => (
-                                        <option
-                                            key={patrocinador.id_patrocinador}
-                                            value={patrocinador.id_patrocinador}
-                                        >
-                                            {patrocinador.institucion || 'N/A'}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div className="mb-3">
-                                <label htmlFor="edit-imagen" className="form-label">Imagen del Evento</label>
-                                <input
-                                    type="file"
-                                    className="form-control"
-                                    id="edit-imagen"
-                                    name="imagen"
-                                    accept="image/*"
-                                    onChange={async (e) => {
-                                        const file = e.target.files[0];
-                                        if (file) {
-                                            const imageUrl = await uploadImage(file);
-                                            setCurrentEvent(prev => ({...prev, imagen: imageUrl}));
-                                        }
-                                    }}
-                                />
-                                {currentEvent.imagen && (
-                                    <div className="mt-2">
-                                        <img
-                                            src={currentEvent.imagen}
-                                            alt="Vista previa"
-                                            style={{ maxHeight: '150px' }}
-                                            className="img-thumbnail"
+                                <div className="row mb-3">
+                                    <div className="col-md-6">
+                                        <label htmlFor="edit-fecha" className="form-label">Fecha Inicio</label>
+                                        <input
+                                            type="date"
+                                            className="form-control"
+                                            id="edit-fecha"
+                                            name="fecha"
+                                            value={currentEvent.fecha || ''}
+                                            onChange={handleInputChange}
+                                            required
                                         />
-                                        <button
-                                            type="button"
-                                            className="btn btn-sm btn-danger mt-2"
-                                            onClick={() => setCurrentEvent(prev => ({...prev, imagen: ''}))}
-                                        >
-                                            <i className="bi bi-trash"></i> Eliminar imagen
-                                        </button>
+                                    </div>
+                                    <div className="col-md-6">
+                                        <label htmlFor="edit-fecha-final" className="form-label">Fecha Final</label>
+                                        <input
+                                            type="date"
+                                            className="form-control"
+                                            id="edit-fecha-final"
+                                            name="fecha_final"
+                                            value={currentEvent.fecha_final || ''}
+                                            onChange={handleInputChange}
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="row mb-3">
+                                    <div className="col-md-6">
+                                        <label htmlFor="edit-hora" className="form-label">Hora Inicio</label>
+                                        <input
+                                            type="time"
+                                            className="form-control"
+                                            id="edit-hora"
+                                            name="hora"
+                                            value={currentEvent.hora ? currentEvent.hora.substring(0, 5) : ''}
+                                            onChange={handleInputChange}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="col-md-6">
+                                        <label htmlFor="edit-hora-final" className="form-label">Hora Final</label>
+                                        <input
+                                            type="time"
+                                            className="form-control"
+                                            id="edit-hora-final"
+                                            name="hora_final"
+                                            value={currentEvent.hora_final ? currentEvent.hora_final.substring(0, 5) : ''}
+                                            onChange={handleInputChange}
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="mb-3">
+                                    <label className="form-label">Modalidad</label>
+                                    <div className="modalidad-options">
+                                        <div className="form-check">
+                                            <input
+                                                className="form-check-input"
+                                                type="radio"
+                                                name="modalidad"
+                                                id="edit-presencial"
+                                                value="presencial"
+                                                checked={currentEvent.modalidad === 'presencial'}
+                                                onChange={handleInputChange}
+                                                required
+                                            />
+                                            <label className="form-check-label" htmlFor="edit-presencial">
+                                                Presencial
+                                            </label>
+                                        </div>
+                                        <div className="form-check">
+                                            <input
+                                                className="form-check-input"
+                                                type="radio"
+                                                name="modalidad"
+                                                id="edit-virtual"
+                                                value="virtual"
+                                                checked={currentEvent.modalidad === 'virtual'}
+                                                onChange={handleInputChange}
+                                            />
+                                            <label className="form-check-label" htmlFor="edit-virtual">
+                                                Virtual
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {currentEvent.modalidad === 'presencial' && (
+                                    <>
+                                        <div className="mb-3">
+                                            <label htmlFor="edit-ubicacion" className="form-label">Ubicación</label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                id="edit-ubicacion"
+                                                name="ubicacion"
+                                                value={currentEvent.ubicacion || currentEvent.lugar || ''}
+                                                onChange={handleInputChange}
+                                                required
+                                            />
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="edit-coordenadas" className="form-label">Coordenadas (opcional)</label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                id="edit-coordenadas"
+                                                name="coordenadas"
+                                                placeholder="Ej: -16.5000, -68.1500"
+                                                value={currentEvent.coordenadas || ''}
+                                                onChange={handleInputChange}
+                                            />
+                                        </div>
+                                    </>
+                                )}
+
+                                {currentEvent.modalidad === 'virtual' && (
+                                    <div className="mb-3">
+                                        <label htmlFor="edit-enlace" className="form-label">Enlace Virtual</label>
+                                        <input
+                                            type="url"
+                                            className="form-control"
+                                            id="edit-enlace"
+                                            name="enlace"
+                                            placeholder="https://meet.google.com/xyz-abcd-123"
+                                            value={currentEvent.enlace || ''}
+                                            onChange={handleInputChange}
+                                            required
+                                        />
                                     </div>
                                 )}
-                            </div>
 
-                            <div className="modal-footer">
-                        <button
-                            type="button"
-                            className="btn btn-secondary"
-                            onClick={cancelarEdicion}
-                        >
-                            Cancelar
-                        </button>
-                        <button type="submit" className="btn btn-primary">
-                            Guardar Cambios
-                        </button>
+                                <div className="mb-3">
+                                    <label htmlFor="edit-tipo" className="form-label">Tipo de Evento</label>
+                                    <select
+                                        className="form-select"
+                                        id="edit-tipo"
+                                        name="tipo"
+                                        value={currentEvent.tipo || ''}
+                                        onChange={handleInputChange}
+                                        required
+                                    >
+                                        <option value="">Seleccione un tipo</option>
+                                        <option value="Cultural">Cultural</option>
+                                        <option value="Académico">Académico</option>
+                                        <option value="Deportivo">Deportivo</option>
+                                        <option value="Social">Social</option>
+                                        <option value="Otro">Otro</option>
+                                    </select>
+                                </div>
+
+                                <div className="mb-3">
+                                    <label htmlFor="edit-descripcion" className="form-label">Descripción</label>
+                                    <textarea
+                                        className="form-control"
+                                        id="edit-descripcion"
+                                        name="descripcion"
+                                        rows="3"
+                                        value={currentEvent.descripcion || ''}
+                                        onChange={handleInputChange}
+                                    ></textarea>
+                                </div>
+
+                                <div className="mb-3">
+                                    <label htmlFor="edit-numero" className="form-label">Número de Contacto</label>
+                                    <input
+                                        type="number"
+                                        className="form-control"
+                                        id="edit-numero"
+                                        name="numero"
+                                        value={currentEvent.numero || ''}
+                                        onChange={handleInputChange}
+                                    />
+                                </div>
+
+                                <div className="mb-3">
+                                    <label htmlFor="edit-expositor" className="form-label">Expositor</label>
+                                    <select
+                                        className="form-select"
+                                        id="edit-expositor"
+                                        name="expositor"
+                                        value={currentEvent.expositor || ''}
+                                        onChange={handleInputChange}
+                                    >
+                                        <option value="">Seleccione un expositor...</option>
+                                        {expositores.map(expositor => (
+                                            <option
+                                                key={expositor.id_expositor}
+                                                value={expositor.id_expositor}
+                                            >
+                                                {expositor.nombre || 'N/A'}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="mb-3">
+                                    <label htmlFor="edit-patrocinador" className="form-label">Patrocinador</label>
+                                    <select
+                                        className="form-select"
+                                        id="edit-patrocinador"
+                                        name="patrocinador"
+                                        value={currentEvent.patrocinador || ''}
+                                        onChange={handleInputChange}
+                                    >
+                                        <option value="">Seleccione un patrocinador...</option>
+                                        {patrocinadores.map(patrocinador => (
+                                            <option
+                                                key={patrocinador.id_patrocinador}
+                                                value={patrocinador.id_patrocinador}
+                                            >
+                                                {patrocinador.institucion || 'N/A'}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="mb-3">
+                                    <label htmlFor="edit-imagen" className="form-label">Imagen del Evento</label>
+                                    <input
+                                        type="file"
+                                        className="form-control"
+                                        id="edit-imagen"
+                                        name="imagen"
+                                        accept="image/*"
+                                        onChange={async (e) => {
+                                            const file = e.target.files[0];
+                                            if (file) {
+                                                const imageUrl = await uploadImage(file);
+                                                setCurrentEvent(prev => ({ ...prev, imagen: imageUrl }));
+                                            }
+                                        }}
+                                    />
+                                    {currentEvent.imagen && (
+                                        <div className="mt-2">
+                                            <img
+                                                src={currentEvent.imagen}
+                                                alt="Vista previa"
+                                                style={{ maxHeight: '150px' }}
+                                                className="img-thumbnail"
+                                            />
+                                            <button
+                                                type="button"
+                                                className="btn btn-sm btn-danger mt-2"
+                                                onClick={() => setCurrentEvent(prev => ({ ...prev, imagen: '' }))}
+                                            >
+                                                <i className="bi bi-trash"></i> Eliminar imagen
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="modal-footer">
+                                    <button
+                                        type="button"
+                                        className="btn btn-secondary"
+                                        onClick={cancelarEdicion}
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button type="submit" className="btn btn-primary">
+                                        Guardar Cambios
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                </form>
-            </div>
-        </div>
-    </div>
-)}
+                </div>
+            )}
 
             {/* Modal para agregar nuevo evento */}
             {showAddModal && (
@@ -648,287 +648,288 @@ export const Eventos = () => {
                                 &times;
                             </button>
                         </div>
-
-                        <form onSubmit={crearEvento}>
-                            <div className="mb-3">
-                                <label htmlFor="new-nombre" className="form-label">Nombre del Evento</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    id="new-nombre"
-                                    name="nombre"
-                                    value={newEvent.nombre}
-                                    onChange={(e) => setNewEvent({ ...newEvent, nombre: e.target.value })}
-                                    required
-                                />
-                            </div>
-
-                            <div className="row mb-3">
-                                <div className="col-md-6">
-                                    <div className="row">
-                                        <div className="col-6">
-                                            <label htmlFor="new-fecha-inicio" className="form-label">Fecha Inicio</label>
-                                            <input
-                                                type="date"
-                                                className="form-control"
-                                                id="new-fecha-inicio"
-                                                name="fecha"
-                                                value={newEvent.fecha}
-                                                onChange={(e) => setNewEvent({ ...newEvent, fecha: e.target.value })}
-                                                required
-                                            />
-                                        </div>
-                                        <div className="col-6">
-                                            <label htmlFor="new-hora-inicio" className="form-label">Hora Inicio</label>
-                                            <input
-                                                type="time"
-                                                className="form-control"
-                                                id="new-hora-inicio"
-                                                name="hora"
-                                                value={newEvent.hora}
-                                                onChange={(e) => setNewEvent({ ...newEvent, hora: e.target.value })}
-                                                required
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-md-6">
-                                    <div className="row">
-                                        <div className="col-6">
-                                            <label htmlFor="new-fecha-fin" className="form-label">Fecha Final</label>
-                                            <input
-                                                type="date"
-                                                className="form-control"
-                                                id="new-fecha-fin"
-                                                name="fecha_final"
-                                                value={newEvent.fecha_final}
-                                                onChange={(e) => setNewEvent({ ...newEvent, fecha_final: e.target.value })}
-                                                required
-                                            />
-                                        </div>
-                                        <div className="col-6">
-                                            <label htmlFor="new-hora-fin" className="form-label">Hora Final</label>
-                                            <input
-                                                type="time"
-                                                className="form-control"
-                                                id="new-hora-fin"
-                                                name="hora_final"
-                                                value={newEvent.hora_final}
-                                                onChange={(e) => setNewEvent({ ...newEvent, hora_final: e.target.value })}
-                                                required
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="mb-3">
-                                <label htmlFor="new-expositor" className="form-label">Expositor</label>
-                                <select
-                                    className="form-select"
-                                    id="new-expositor"
-                                    name="expositor"
-                                    value={newEvent.expositor || ''}
-                                    onChange={(e) => setNewEvent({ ...newEvent, expositor: e.target.value })}
-                                >
-                                    <option value="">Seleccione un expositor...</option>
-                                    {expositores.map(expositor => (
-                                        <option
-                                            key={expositor.id_expositor}
-                                            value={expositor.id_expositor}
-                                        >
-                                            {expositor.nombre || 'N/A'}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div className="mb-3">
-                                <label htmlFor="new-patrocinador" className="form-label">Patrocinador</label>
-                                <select
-                                    className="form-select"
-                                    id="new-patrocinador"
-                                    name="patrocinador"
-                                    value={newEvent.patrocinador || ''}
-                                    onChange={(e) => setNewEvent({ ...newEvent, patrocinador: e.target.value })}
-                                >
-                                    <option value="">Seleccione un patrocinador...</option>
-                                    {patrocinadores.map(patrocinador => (
-                                        <option
-                                            key={patrocinador.id_patrocinador}
-                                            value={patrocinador.id_patrocinador}
-                                        >
-                                            {patrocinador.institucion || 'N/A'}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div className="mb-3">
-                                <label className="form-label">Modalidad</label>
-                                <div className="modalidad-options">
-                                    <div className="form-check">
-                                        <input
-                                            className="form-check-input"
-                                            type="radio"
-                                            name="modalidad"
-                                            id="new-presencial"
-                                            value="presencial"
-                                            checked={newEvent.modalidad === 'presencial'}
-                                            onChange={() => setNewEvent({ ...newEvent, modalidad: 'presencial' })}
-                                            required
-                                        />
-                                        <label className="form-check-label" htmlFor="new-presencial">
-                                            Presencial
-                                        </label>
-                                    </div>
-                                    <div className="form-check">
-                                        <input
-                                            className="form-check-input"
-                                            type="radio"
-                                            name="modalidad"
-                                            id="new-virtual"
-                                            value="virtual"
-                                            checked={newEvent.modalidad === 'virtual'}
-                                            onChange={() => setNewEvent({ ...newEvent, modalidad: 'virtual' })}
-                                        />
-                                        <label className="form-check-label" htmlFor="new-virtual">
-                                            Virtual
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {newEvent.modalidad === 'presencial' && (
-                                <>
-                                    <div className="mb-3">
-                                        <label htmlFor="new-ubicacion" className="form-label">Ubicación</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            id="new-ubicacion"
-                                            name="ubicacion"
-                                            value={newEvent.ubicacion}
-                                            onChange={(e) => setNewEvent({ ...newEvent, ubicacion: e.target.value })}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="mb-3">
-                                        <label htmlFor="new-coordenadas" className="form-label">Coordenadas (opcional)</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            id="new-coordenadas"
-                                            name="coordenadas"
-                                            placeholder="Ej: -16.5000, -68.1500"
-                                            value={newEvent.coordenadas}
-                                            onChange={(e) => setNewEvent({ ...newEvent, coordenadas: e.target.value })}
-                                        />
-                                    </div>
-                                </>
-                            )}
-
-                            {newEvent.modalidad === 'virtual' && (
+                        <div className="modal-body">
+                            <form onSubmit={crearEvento}>
                                 <div className="mb-3">
-                                    <label htmlFor="new-enlace" className="form-label">Enlace Virtual</label>
+                                    <label htmlFor="new-nombre" className="form-label">Nombre del Evento</label>
                                     <input
-                                        type="url"
+                                        type="text"
                                         className="form-control"
-                                        id="new-enlace"
-                                        name="enlace"
-                                        placeholder="https://meet.google.com/xyz-abcd-123"
-                                        value={newEvent.enlace}
-                                        onChange={(e) => setNewEvent({ ...newEvent, enlace: e.target.value })}
+                                        id="new-nombre"
+                                        name="nombre"
+                                        value={newEvent.nombre}
+                                        onChange={(e) => setNewEvent({ ...newEvent, nombre: e.target.value })}
                                         required
                                     />
                                 </div>
-                            )}
 
-                            <div className="mb-3">
-                                <label htmlFor="new-tipo" className="form-label">Tipo de Evento</label>
-                                <select
-                                    className="form-select"
-                                    id="new-tipo"
-                                    name="tipo"
-                                    value={newEvent.tipo}
-                                    onChange={(e) => setNewEvent({ ...newEvent, tipo: e.target.value })}
-                                    required
-                                >
-                                    <option value="">Seleccione un tipo</option>
-                                    <option value="Cultural">Cultural</option>
-                                    <option value="Académico">Académico</option>
-                                    <option value="Deportivo">Deportivo</option>
-                                    <option value="Social">Social</option>
-                                    <option value="Otro">Otro</option>
-                                </select>
-                            </div>
+                                <div className="row mb-3">
+                                    <div className="col-md-6">
+                                        <div className="row">
+                                            <div className="col-6">
+                                                <label htmlFor="new-fecha-inicio" className="form-label">Fecha Inicio</label>
+                                                <input
+                                                    type="date"
+                                                    className="form-control"
+                                                    id="new-fecha-inicio"
+                                                    name="fecha"
+                                                    value={newEvent.fecha}
+                                                    onChange={(e) => setNewEvent({ ...newEvent, fecha: e.target.value })}
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="col-6">
+                                                <label htmlFor="new-hora-inicio" className="form-label">Hora Inicio</label>
+                                                <input
+                                                    type="time"
+                                                    className="form-control"
+                                                    id="new-hora-inicio"
+                                                    name="hora"
+                                                    value={newEvent.hora}
+                                                    onChange={(e) => setNewEvent({ ...newEvent, hora: e.target.value })}
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="col-md-6">
+                                        <div className="row">
+                                            <div className="col-6">
+                                                <label htmlFor="new-fecha-fin" className="form-label">Fecha Final</label>
+                                                <input
+                                                    type="date"
+                                                    className="form-control"
+                                                    id="new-fecha-fin"
+                                                    name="fecha_final"
+                                                    value={newEvent.fecha_final}
+                                                    onChange={(e) => setNewEvent({ ...newEvent, fecha_final: e.target.value })}
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="col-6">
+                                                <label htmlFor="new-hora-fin" className="form-label">Hora Final</label>
+                                                <input
+                                                    type="time"
+                                                    className="form-control"
+                                                    id="new-hora-fin"
+                                                    name="hora_final"
+                                                    value={newEvent.hora_final}
+                                                    onChange={(e) => setNewEvent({ ...newEvent, hora_final: e.target.value })}
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
-                            <div className="mb-3">
-                                <label htmlFor="new-descripcion" className="form-label">Descripción</label>
-                                <textarea
-                                    className="form-control"
-                                    id="new-descripcion"
-                                    name="descripcion"
-                                    rows="3"
-                                    value={newEvent.descripcion}
-                                    onChange={(e) => setNewEvent({ ...newEvent, descripcion: e.target.value })}
-                                ></textarea>
-                            </div>
+                                <div className="mb-3">
+                                    <label htmlFor="new-expositor" className="form-label">Expositor</label>
+                                    <select
+                                        className="form-select"
+                                        id="new-expositor"
+                                        name="expositor"
+                                        value={newEvent.expositor || ''}
+                                        onChange={(e) => setNewEvent({ ...newEvent, expositor: e.target.value })}
+                                    >
+                                        <option value="">Seleccione un expositor...</option>
+                                        {expositores.map(expositor => (
+                                            <option
+                                                key={expositor.id_expositor}
+                                                value={expositor.id_expositor}
+                                            >
+                                                {expositor.nombre || 'N/A'}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
 
-                            <div className="mb-3">
-                                <label htmlFor="new-numero" className="form-label">Número de Contacto</label>
-                                <input
-                                    type="number"
-                                    className="form-control"
-                                    id="new-numero"
-                                    name="numero"
-                                    value={newEvent.numero}
-                                    onChange={(e) => setNewEvent({ ...newEvent, numero: e.target.value })}
-                                />
-                            </div>
+                                <div className="mb-3">
+                                    <label htmlFor="new-patrocinador" className="form-label">Patrocinador</label>
+                                    <select
+                                        className="form-select"
+                                        id="new-patrocinador"
+                                        name="patrocinador"
+                                        value={newEvent.patrocinador || ''}
+                                        onChange={(e) => setNewEvent({ ...newEvent, patrocinador: e.target.value })}
+                                    >
+                                        <option value="">Seleccione un patrocinador...</option>
+                                        {patrocinadores.map(patrocinador => (
+                                            <option
+                                                key={patrocinador.id_patrocinador}
+                                                value={patrocinador.id_patrocinador}
+                                            >
+                                                {patrocinador.institucion || 'N/A'}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
 
-                            <div className="mb-3">
-                                <label htmlFor="new-imagen" className="form-label">Imagen del Evento</label>
-                                <input
-                                    type="file"
-                                    className="form-control"
-                                    id="new-imagen"
-                                    name="imagen"
-                                    accept="image/*"
-                                    onChange={handleImageUpload}
-                                />
-                                {newEvent.imagen && (
-                                    <div className="mt-2">
-                                        <img
-                                            src={newEvent.imagen}
-                                            alt="Vista previa"
-                                            style={{ maxHeight: '150px' }}
-                                            className="img-thumbnail"
+                                <div className="mb-3">
+                                    <label className="form-label">Modalidad</label>
+                                    <div className="modalidad-options">
+                                        <div className="form-check">
+                                            <input
+                                                className="form-check-input"
+                                                type="radio"
+                                                name="modalidad"
+                                                id="new-presencial"
+                                                value="presencial"
+                                                checked={newEvent.modalidad === 'presencial'}
+                                                onChange={() => setNewEvent({ ...newEvent, modalidad: 'presencial' })}
+                                                required
+                                            />
+                                            <label className="form-check-label" htmlFor="new-presencial">
+                                                Presencial
+                                            </label>
+                                        </div>
+                                        <div className="form-check">
+                                            <input
+                                                className="form-check-input"
+                                                type="radio"
+                                                name="modalidad"
+                                                id="new-virtual"
+                                                value="virtual"
+                                                checked={newEvent.modalidad === 'virtual'}
+                                                onChange={() => setNewEvent({ ...newEvent, modalidad: 'virtual' })}
+                                            />
+                                            <label className="form-check-label" htmlFor="new-virtual">
+                                                Virtual
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {newEvent.modalidad === 'presencial' && (
+                                    <>
+                                        <div className="mb-3">
+                                            <label htmlFor="new-ubicacion" className="form-label">Ubicación</label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                id="new-ubicacion"
+                                                name="ubicacion"
+                                                value={newEvent.ubicacion}
+                                                onChange={(e) => setNewEvent({ ...newEvent, ubicacion: e.target.value })}
+                                                required
+                                            />
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="new-coordenadas" className="form-label">Coordenadas (opcional)</label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                id="new-coordenadas"
+                                                name="coordenadas"
+                                                placeholder="Ej: -16.5000, -68.1500"
+                                                value={newEvent.coordenadas}
+                                                onChange={(e) => setNewEvent({ ...newEvent, coordenadas: e.target.value })}
+                                            />
+                                        </div>
+                                    </>
+                                )}
+
+                                {newEvent.modalidad === 'virtual' && (
+                                    <div className="mb-3">
+                                        <label htmlFor="new-enlace" className="form-label">Enlace Virtual</label>
+                                        <input
+                                            type="url"
+                                            className="form-control"
+                                            id="new-enlace"
+                                            name="enlace"
+                                            placeholder="https://meet.google.com/xyz-abcd-123"
+                                            value={newEvent.enlace}
+                                            onChange={(e) => setNewEvent({ ...newEvent, enlace: e.target.value })}
+                                            required
                                         />
-                                        <button
-                                            type="button"
-                                            className="btn btn-sm btn-danger mt-2"
-                                            onClick={() => setNewEvent({ ...newEvent, imagen: '' })}
-                                        >
-                                            <i className="bi bi-trash"></i> Eliminar imagen
-                                        </button>
                                     </div>
                                 )}
-                            </div>
 
-                            <div className="modal-actions">
-                                <button
-                                    type="button"
-                                    className="btn btn-secondary"
-                                    onClick={() => setShowAddModal(false)}
-                                >
-                                    Cancelar
-                                </button>
-                                <button type="submit" className="btn btn-primary">
-                                    Crear Evento
-                                </button>
-                            </div>
-                        </form>
+                                <div className="mb-3">
+                                    <label htmlFor="new-tipo" className="form-label">Tipo de Evento</label>
+                                    <select
+                                        className="form-select"
+                                        id="new-tipo"
+                                        name="tipo"
+                                        value={newEvent.tipo}
+                                        onChange={(e) => setNewEvent({ ...newEvent, tipo: e.target.value })}
+                                        required
+                                    >
+                                        <option value="">Seleccione un tipo</option>
+                                        <option value="Cultural">Cultural</option>
+                                        <option value="Académico">Académico</option>
+                                        <option value="Deportivo">Deportivo</option>
+                                        <option value="Social">Social</option>
+                                        <option value="Otro">Otro</option>
+                                    </select>
+                                </div>
+
+                                <div className="mb-3">
+                                    <label htmlFor="new-descripcion" className="form-label">Descripción</label>
+                                    <textarea
+                                        className="form-control"
+                                        id="new-descripcion"
+                                        name="descripcion"
+                                        rows="3"
+                                        value={newEvent.descripcion}
+                                        onChange={(e) => setNewEvent({ ...newEvent, descripcion: e.target.value })}
+                                    ></textarea>
+                                </div>
+
+                                <div className="mb-3">
+                                    <label htmlFor="new-numero" className="form-label">Número de Contacto</label>
+                                    <input
+                                        type="number"
+                                        className="form-control"
+                                        id="new-numero"
+                                        name="numero"
+                                        value={newEvent.numero}
+                                        onChange={(e) => setNewEvent({ ...newEvent, numero: e.target.value })}
+                                    />
+                                </div>
+
+                                <div className="mb-3">
+                                    <label htmlFor="new-imagen" className="form-label">Imagen del Evento</label>
+                                    <input
+                                        type="file"
+                                        className="form-control"
+                                        id="new-imagen"
+                                        name="imagen"
+                                        accept="image/*"
+                                        onChange={handleImageUpload}
+                                    />
+                                    {newEvent.imagen && (
+                                        <div className="mt-2">
+                                            <img
+                                                src={newEvent.imagen}
+                                                alt="Vista previa"
+                                                style={{ maxHeight: '150px' }}
+                                                className="img-thumbnail"
+                                            />
+                                            <button
+                                                type="button"
+                                                className="btn btn-sm btn-danger mt-2"
+                                                onClick={() => setNewEvent({ ...newEvent, imagen: '' })}
+                                            >
+                                                <i className="bi bi-trash"></i> Eliminar imagen
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="modal-actions">
+                                    <button
+                                        type="button"
+                                        className="btn btn-secondary"
+                                        onClick={() => setShowAddModal(false)}
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button type="submit" className="btn btn-primary">
+                                        Crear Evento
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             )}

@@ -38,6 +38,8 @@
   --sidebar-width: 280px;
   --sidebar-collapsed-width: 80px;
   --header-height: 70px;
+  --modal-header-height: 50px; /* Nueva variable para header del modal */
+  --modal-footer-height: 60px; /* Nueva variable para footer del modal */
 }
 
 /* Reset y estilos base */
@@ -66,8 +68,8 @@ body {
   width: 280px;
   background-color: #cce7ec !important;
   padding: 1.5rem 1rem;
-  height: calc(100vh - va(--header-height));
-  position: sticky;/*fixed !important*/
+  height: calc(100vh - var(--header-height));
+  position: sticky;
   top: 70px !important;
   left: 0 !important;
   z-index: 90;
@@ -205,7 +207,7 @@ body {
 }
 
 .sidebar.collapsed + .main-content {
-  margin-left: 80px; /* Igual al ancho del sidebar collapsed */
+  margin-left: 80px;
 }
 
 /* Header principal */
@@ -412,7 +414,414 @@ body {
   font-weight: 500;
 }
 
-/* Responsividad */
+/* ESTILOS MEJORADOS PARA MODALES - HEADER REDUCIDO Y SCROLL CORREGIDO */
+
+/* Modal backdrop - overlay de fondo */
+.modal-backdrop,
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+  padding: 20px;
+  overflow-y: auto;
+  backdrop-filter: blur(2px);
+}
+
+/* Modal container - contenedor principal */
+.modal-container,
+.modal-content {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh; /* Reducido de 95vh a 90vh para mejor visualización */
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  animation: modalFadeIn 0.3s ease-out;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animación de entrada del modal */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Header del modal - REDUCIDO */
+.modal-header {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  padding: 0.5rem 1rem; /* Reducido de 1rem 1.5rem */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 12px 12px 0 0;
+  height: var(--modal-header-height); /* Altura fija */
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  min-height: var(--modal-header-height); /* Asegurar altura mínima */
+}
+
+.modal-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.1rem; /* Reducido de 1.2rem */
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  position: relative;
+  z-index: 1;
+  line-height: 1.2;
+}
+
+/* Botones de cerrar mejorados - MÁS PEQUEÑOS */
+.modal-close-btn,
+.btn-close {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 1rem; /* Reducido de 1.5rem */
+  width: 28px; /* Reducido de 40px */
+  height: 28px; /* Reducido de 40px */
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  flex-shrink: 0;
+}
+
+.modal-close-btn:hover,
+.btn-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+
+.modal-close-btn:active,
+.btn-close:active {
+  transform: scale(0.95) rotate(90deg);
+}
+
+/* Body del modal con scroll CORREGIDO */
+.modal-body {
+  padding: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+  /* Cálculo más preciso para la altura disponible */
+  max-height: calc(90vh - var(--modal-header-height) - var(--modal-footer-height));
+  min-height: 0; /* Importante para permitir que el flex funcione correctamente */
+}
+
+.modal-body form {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-height: 100%; /* Asegurar que el formulario ocupe todo el espacio disponible */
+}
+
+/* Estilos para formularios dentro del modal */
+.modal-body .form-label {
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.modal-body .form-control,
+.modal-body .form-select {
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  background-color: #fafafa;
+}
+
+.modal-body .form-control:focus,
+.modal-body .form-select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(0, 77, 64, 0.25);
+  background-color: white;
+  outline: none;
+}
+
+.modal-body .form-control:hover,
+.modal-body .form-select:hover {
+  border-color: var(--accent-color);
+  background-color: white;
+}
+
+.modal-body textarea.form-control {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Estilos para radio buttons */
+.modalidad-options {
+  display: flex;
+  gap: 2rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 2px solid #e9ecef;
+}
+
+.form-check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-check-input {
+  width: 1.2rem;
+  height: 1.2rem;
+  margin: 0;
+}
+
+.form-check-label {
+  font-weight: 500;
+  color: var(--text-dark);
+  cursor: pointer;
+}
+
+/* Grupos de campos en fila */
+.row {
+  display: flex;
+  gap: 1rem;
+  margin: 0;
+}
+
+.col-md-6,
+.col-6 {
+  flex: 1;
+  padding: 0;
+}
+
+/* Footer del modal - ALTURA FIJA */
+.modal-footer,
+.modal-actions {
+  padding: 1rem 1.5rem; /* Reducido de 1.5rem 2rem */
+  background-color: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  flex-shrink: 0;
+  border-radius: 0 0 12px 12px;
+  height: var(--modal-footer-height); /* Altura fija */
+  min-height: var(--modal-footer-height); /* Asegurar altura mínima */
+  align-items: center;
+}
+
+.modal-footer button,
+.modal-actions button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+  position: relative;
+  overflow: hidden;
+}
+
+.modal-footer .btn-secondary,
+.modal-actions .btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.modal-footer .btn-secondary:hover,
+.modal-actions .btn-secondary:hover {
+  background-color: #5a6268;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.modal-footer .btn-primary,
+.modal-actions .btn-primary {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  box-shadow: 0 4px 15px rgba(0, 77, 64, 0.3);
+}
+
+.modal-footer .btn-primary:hover,
+.modal-actions .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 77, 64, 0.4);
+}
+
+.modal-footer .btn-primary:active,
+.modal-actions .btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 77, 64, 0.3);
+}
+
+/* Estilos para imágenes en el modal */
+.img-thumbnail {
+  border: 3px solid #e9ecef;
+  border-radius: 8px;
+  padding: 0.25rem;
+  background-color: white;
+  transition: all 0.3s ease;
+}
+
+.img-thumbnail:hover {
+  border-color: var(--primary-color);
+  transform: scale(1.02);
+}
+
+/* Scrollbar personalizada para el modal body */
+.modal-body::-webkit-scrollbar {
+  width: 6px; /* Más delgada */
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 3px;
+  opacity: 0.7;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary-color);
+  opacity: 1;
+}
+
+/* Responsividad para modales */
+@media (max-width: 768px) {
+  .modal-backdrop,
+  .modal-overlay {
+    padding: 5px; /* Reducido */
+    align-items: flex-start;
+  }
+  
+  .modal-container,
+  .modal-content {
+    margin: 5px auto;
+    max-height: 95vh;
+    border-radius: 8px; /* Bordes menos redondeados en móvil */
+  }
+  
+  .modal-header {
+    border-radius: 8px 8px 0 0;
+    padding: 0.75rem 1rem;
+    height: 50px; /* Más pequeño en móvil */
+  }
+  
+  .modal-header h3 {
+    font-size: 1rem;
+  }
+  
+  .modal-close-btn,
+  .btn-close {
+    width: 28px;
+    height: 28px;
+    font-size: 1rem;
+  }
+  
+  .modal-body {
+    max-height: calc(95vh - 50px - 70px); /* Ajustado para móvil */
+  }
+  
+  .modal-body form {
+    padding: 1rem;
+  }
+  
+  .modalidad-options {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .row {
+    flex-direction: column;
+  }
+  
+  .modal-footer,
+  .modal-actions {
+    padding: 0.75rem 1rem;
+    flex-wrap: wrap;
+    border-radius: 0 0 8px 8px;
+    height: 70px; /* Altura fija para móvil */
+  }
+  
+  .modal-footer button,
+  .modal-actions button {
+    flex: 1;
+    min-width: auto;
+    padding: 0.5rem 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .modal-footer,
+  .modal-actions {
+    flex-direction: column;
+    height: auto; /* Permitir altura automática en pantallas muy pequeñas */
+    min-height: 70px;
+  }
+  
+  .modal-footer button,
+  .modal-actions button {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  
+  .modal-footer button:last-child,
+  .modal-actions button:last-child {
+    margin-bottom: 0;
+  }
+  
+  .modal-body {
+    max-height: calc(95vh - 50px - 100px); /* Más espacio para botones apilados */
+  }
+}
+
+/* Responsividad general */
 @media (max-width: 1200px) {
   .sidebar {
     width: 250px;
@@ -451,6 +860,11 @@ body {
   
   .content-section {
     padding: 1.5rem;
+  }
+  
+  .main-content {
+    margin-left: 0 !important;
+    width: 100%;
   }
 }
 
@@ -519,114 +933,5 @@ body {
   
   .chart-placeholder {
     height: 200px;
-  }
-}
-
-/* Estilos para el modal (se mantienen igual) */
-.modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1050;
-  padding: 20px;
-  overflow-y: auto;
-}
-
-.modal-container {
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
-  width: 100%;
-  max-width: 800px;
-  max-height: 85vh;
-  display: flex;
-  flex-direction: column;
-  margin: 20px;
-  animation: modalFadeIn 0.3s ease-out;
-  position: relative;
-}
-
-/* Resto de estilos del modal se mantienen igual */
-
-@media (max-width: 576px) {
-  .user-actions {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-  
-  .user-actions button {
-    flex: 1 0 auto;
-    min-width: 120px;
-  }
-  
-  .modal-container {
-    width: 95%;
-    margin: 10px auto;
-  }
-  
-  .modal-footer {
-    flex-wrap: wrap;
-  }
-  
-  .modal-footer button {
-    flex: 1 0 100%;
-    margin-bottom: 0.5rem;
-  }
-  
-  .modal-footer button:last-child {
-    margin-bottom: 0;
-  }
-}
-
-/* RESPONSIVE - Sidebar y main */
-@media (max-width: 992px) {
-  .sidebar {
-    position: fixed;
-    left: -100%;
-    top: 70px;
-    height: calc(100vh - 70px - 200px);
-    z-index: 1000;
-    transition: left 0.3s ease;
-    width: var(--sidebar-width);
-  }
-
-  .sidebar.open {
-    left: 0;
-  }
-
-  .main-content {
-    margin-left: 0 !important;
-    width: 100%;
-  }
-
-  .mobile-menu-toggle {
-    font-size: 1.5rem;
-    background: none;
-    border: none;
-    cursor: pointer;
-    margin-right: 1rem;
-    color: var(--primary-color);
-  }
-
-  /* Overlay cuando el menú está abierto */
-  .sidebar.open::after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: var(--sidebar-width);
-    width: calc(100% - var(--sidebar-width));
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.3);
-    z-index: -1;
-  }
-
-  .toggle-sidebar {
-    display: none;
   }
 }
