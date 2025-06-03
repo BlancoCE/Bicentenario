@@ -1,4 +1,4 @@
-const QRCode = require('qrCode');
+const QRCode = require('qrcode');
 
 const generarQR = async (req, res) => {
    try{
