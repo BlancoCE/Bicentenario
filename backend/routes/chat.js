@@ -95,65 +95,6 @@ const handleAgendaQuery = async (question) => {
   return [];
 };
 
-// Generador de respuestas
-const generateResponse = async (question) => {
-  const intent = detectIntent(question);
-  
-  // Consultas específicas a la base de datos
-  if (intent.isEventQuery) {
-    const events = await handleEventQuery(intent);
-    return formatEventsResponse(events);
-  }
-  
-  if (intent.isSpeakerQuery) {
-    const speakers = await handleSpeakerQuery(question);
-    const eventName = question.match(/evento (.*)/i)?.[1] || "el evento";
-    return formatSpeakersResponse(speakers, eventName);
-  }
-  
-  if (intent.isAgendaQuery) {
-    const agendaItems = await handleAgendaQuery(question);
-    const eventName = question.match(/evento (.*)/i)?.[1] || "el evento";
-    return formatAgendaResponse(agendaItems, eventName);
-  }
-  
-  // Preguntas generales que requieren IA
-  const prompt = `[INST] Eres BoliviaBot, asistente del Bicentenario de Bolivia. 
-  Responde de manera concisa (máximo 3 oraciones) en español coloquial.
-  
-  Contexto:
-  - Base de datos con eventos, expositores y agendas
-  - Fechas importantes: 6 de agosto 2025 (acto central)
-
-  Regla:
-  - Si alguien te pide informacion de los eventos tienes que responder de manera ordenada
-  
-  Pregunta: ${question} [/INST]`;
-
-  try {
-    const response = await axios.post(
-      'https://api.deepinfra.com/v1/inference/mistralai/Mixtral-8x7B-Instruct-v0.1',
-      {
-        input: prompt,
-        max_new_tokens: 150,
-        temperature: 0.6
-      },
-      {
-        headers: {
-          'Authorization': `Bearer ${process.env.DEEPINFRA_API_KEY}`,
-          'Content-Type': 'application/json'
-        },
-        timeout: 5000
-      }
-    );
-    
-    return response.data.results[0].generated_text;
-  } catch (error) {
-    console.error('Error al consultar IA:', error);
-    return "Disculpa, estoy teniendo problemas para responder. ¿Podrías reformular tu pregunta?";
-  }
-};
-
 // Ruta principal
 router.post('/', async (req, res) => {
   try {
@@ -175,5 +116,79 @@ router.post('/', async (req, res) => {
     });
   }
 });
+// En tu archivo chat.js, reemplaza la función generateResponse
+
+const generateResponse = async (question) => {
+  const intent = detectIntent(question);
+  
+  try {
+    // Consultas específicas a la base de datos
+    if (intent.isEventQuery) {
+      console.log('🔍 Procesando consulta de eventos...');
+      const events = await handleEventQuery(intent);
+      return formatEventsResponse(events);
+    }
+    
+    if (intent.isSpeakerQuery) {
+      console.log('🎤 Procesando consulta de expositores...');
+      const speakers = await handleSpeakerQuery(question);
+      const eventName = question.match(/evento (.*)/i)?.[1] || "el evento";
+      return formatSpeakersResponse(speakers, eventName);
+    }
+    
+    if (intent.isAgendaQuery) {
+      console.log('⏰ Procesando consulta de agenda...');
+      const agendaItems = await handleAgendaQuery(question);
+      const eventName = question.match(/evento (.*)/i)?.[1] || "el evento";
+      return formatAgendaResponse(agendaItems, eventName);
+    }
+    
+    // Preguntas generales que requieren IA
+    console.log('🤖 Procesando con IA...');
+    const prompt = `[INST] Eres BoliviaBot, asistente del Bicentenario de Bolivia. 
+    Responde de manera concisa (máximo 3 oraciones) en español coloquial.
+    
+    Contexto:
+    - Base de datos con eventos, expositores y agendas
+    - Fechas importantes: 6 de agosto 2025 (acto central)
+
+    Regla:
+    - Si alguien te pide informacion de los eventos tienes que responder de manera ordenada
+    
+    Pregunta: ${question} [/INST]`;
+
+    const response = await axios.post(
+      'https://api.deepinfra.com/v1/inference/mistralai/Mixtral-8x7B-Instruct-v0.1',
+      {
+        input: prompt,
+        max_new_tokens: 150,
+        temperature: 0.6
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${process.env.DEEPINFRA_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        timeout: 5000
+      }
+    );
+    
+    return response.data.results[0].generated_text;
+    
+  } catch (error) {
+    console.error('❌ Error en generateResponse:', error);
+    
+    // Respuesta de fallback más específica
+    if (error.code === 'ENOTFOUND' || error.message.includes('getaddrinfo')) {
+      return "Estoy teniendo problemas de conexión con la base de datos. Por favor, intenta nuevamente en unos momentos.";
+    }
+    
+    if (error.response && error.response.status) {
+      return "El servicio de IA está temporalmente no disponible. ¿Podrías reformular tu pregunta?";
+    }
+    
+    return "Disculpa, estoy teniendo problemas para responder. ¿Podrías reformular tu pregunta?";
+  }
+};
 
 module.exports = router;
