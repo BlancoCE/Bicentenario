@@ -1,9 +1,19 @@
 const { Pool } = require('pg');
 
+// Debug: Mostrar variables de entorno (sin contraseñas)
+console.log('🔍 DEBUG - Variables de entorno:');
+console.log('   NODE_ENV:', process.env.NODE_ENV);
+console.log('   DATABASE_URL existe:', !!process.env.DATABASE_URL);
+if (process.env.DATABASE_URL) {
+  console.log('   DATABASE_URL (parcial):', process.env.DATABASE_URL.substring(0, 20) + '...');
+} else {
+  console.log('   DATABASE_URL: NO DEFINIDA');
+}
+
 // Configuración que funciona tanto en local como en Railway
 const createPool = () => {
   // Si existe DATABASE_URL (Railway/producción), usarla
-  if (process.env.DATABASE_URL) {
+  if (process.env.DATABASE_URL && process.env.DATABASE_URL !== 'postgresql://username:password@host:port/database') {
     console.log('🚀 Conectando usando DATABASE_URL (Railway)');
     return new Pool({
       connectionString: process.env.DATABASE_URL,
@@ -11,7 +21,7 @@ const createPool = () => {
     });
   }
   
-  // Si no, usar variables individuales (desarrollo local)
+  // Si DATABASE_URL tiene el valor por defecto o no existe, usar variables individuales
   console.log('🏠 Conectando usando variables locales');
   return new Pool({
     user: process.env.DB_USER || 'postgres',
@@ -73,36 +83,45 @@ const query = async (text, params) => {
   }
 };
 
-// Funciones básicas para eventos (versión simple)
+// Funciones básicas para eventos (versión segura)
 const getEvents = async (options = {}) => {
   try {
-    // Consulta básica - ajusta según tu estructura de tablas
-    let queryText = 'SELECT * FROM eventos WHERE 1=1';
+    console.log('🔍 getEvents llamada con opciones:', options);
+    
+    // Verificar que el pool esté configurado correctamente
+    if (!pool) {
+      throw new Error('Pool de conexiones no inicializado');
+    }
+    
+    // Consulta básica muy simple para probar
+    let queryText = 'SELECT 1 as test';
     const params = [];
     
-    // Agrega filtros si existen
-    if (options.location) {
-      queryText += ' AND LOWER(ubicacion) LIKE $1';
-      params.push(`%${options.location.toLowerCase()}%`);
-    }
-    
-    if (options.limit) {
-      queryText += ` LIMIT ${options.limit}`;
-    }
-    
     const result = await query(queryText, params);
-    return result.rows;
+    console.log('✅ Consulta de prueba exitosa');
+    
+    // Retornar datos de prueba por ahora
+    return [
+      {
+        id_evento: 1,
+        nombre: 'Evento de Prueba',
+        descripcion: 'Descripción de prueba',
+        fecha: new Date(),
+        ubicacion: 'La Paz',
+        departamento: 'La Paz'
+      }
+    ];
+    
   } catch (error) {
     console.error('❌ Error en getEvents:', error);
-    return []; // Retornar array vacío en caso de error
+    throw error; // Re-lanzar el error para que se maneje arriba
   }
 };
 
 const getEventSpeakers = async (eventId) => {
   try {
-    // Consulta básica - ajusta según tu estructura
-    const result = await query('SELECT * FROM expositores WHERE evento_id = $1', [eventId]);
-    return result.rows;
+    console.log('🎤 getEventSpeakers para evento:', eventId);
+    return []; // Retornar array vacío por ahora
   } catch (error) {
     console.error('❌ Error en getEventSpeakers:', error);
     return [];
@@ -111,9 +130,8 @@ const getEventSpeakers = async (eventId) => {
 
 const getEventAgenda = async (eventId) => {
   try {
-    // Consulta básica - ajusta según tu estructura
-    const result = await query('SELECT * FROM agenda WHERE evento_id = $1', [eventId]);
-    return result.rows;
+    console.log('⏰ getEventAgenda para evento:', eventId);
+    return []; // Retornar array vacío por ahora
   } catch (error) {
     console.error('❌ Error en getEventAgenda:', error);
     return [];
