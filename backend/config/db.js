@@ -1,117 +1,128 @@
-// Agregar estas funciones al final de tu db.js, antes del module.exports
+const { Pool } = require('pg');
 
-// Función para obtener eventos con filtros opcionales
+// Configuración que funciona tanto en local como en Railway
+const createPool = () => {
+  // Si existe DATABASE_URL (Railway/producción), usarla
+  if (process.env.DATABASE_URL) {
+    console.log('🚀 Conectando usando DATABASE_URL (Railway)');
+    return new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+    });
+  }
+  
+  // Si no, usar variables individuales (desarrollo local)
+  console.log('🏠 Conectando usando variables locales');
+  return new Pool({
+    user: process.env.DB_USER || 'postgres',
+    password: process.env.DB_PASSWORD || '',
+    host: process.env.DB_HOST || 'localhost',
+    port: process.env.DB_PORT || 5432,
+    database: process.env.DB_NAME || 'BICENTENARIO'
+  });
+};
+
+const pool = createPool();
+
+// Función para probar la conexión
+const testConnection = async () => {
+  try {
+    const client = await pool.connect();
+    console.log('✅ Conexión exitosa con PostgreSQL');
+    
+    // Mostrar información de la base de datos
+    const result = await client.query('SELECT version()');
+    console.log('📊 PostgreSQL version:', result.rows[0].version.split(' ')[0] + ' ' + result.rows[0].version.split(' ')[1]);
+    
+    client.release();
+    return true;
+  } catch (err) {
+    console.error('❌ Error al conectar con PostgreSQL:', err.message);
+    console.error('🔧 Configuración actual:');
+    if (process.env.DATABASE_URL) {
+      console.error('   DATABASE_URL:', process.env.DATABASE_URL.replace(/:[^:@]+@/, ':****@'));
+    } else {
+      console.error('   HOST:', process.env.DB_HOST || 'localhost');
+      console.error('   PORT:', process.env.DB_PORT || 5432);
+      console.error('   USER:', process.env.DB_USER || 'postgres');
+      console.error('   DATABASE:', process.env.DB_NAME || 'BICENTENARIO');
+    }
+    return false;
+  }
+};
+
+// Función genérica para consultas con manejo de errores
+const query = async (text, params) => {
+  const start = Date.now();
+  try {
+    const res = await pool.query(text, params);
+    const duration = Date.now() - start;
+    console.log('📝 Consulta ejecutada:', {
+      query: text.substring(0, 50) + '...',
+      duration: duration + 'ms',
+      rows: res.rowCount
+    });
+    return res;
+  } catch (error) {
+    console.error('❌ Error en consulta SQL:', {
+      query: text.substring(0, 100),
+      error: error.message,
+      params: params
+    });
+    throw error;
+  }
+};
+
+// Funciones básicas para eventos (versión simple)
 const getEvents = async (options = {}) => {
   try {
-    let queryText = `
-      SELECT 
-        id_evento,
-        nombre,
-        descripcion,
-        fecha,
-        ubicacion,
-        departamento,
-        tipo_evento,
-        estado
-      FROM eventos 
-      WHERE estado = 'activo'
-    `;
-    
+    // Consulta básica - ajusta según tu estructura de tablas
+    let queryText = 'SELECT * FROM eventos WHERE 1=1';
     const params = [];
-    let paramCount = 0;
-
-    // Filtro por ubicación/departamento
+    
+    // Agrega filtros si existen
     if (options.location) {
-      paramCount++;
-      queryText += ` AND (LOWER(ubicacion) LIKE $${paramCount} OR LOWER(departamento) LIKE $${paramCount})`;
+      queryText += ' AND LOWER(ubicacion) LIKE $1';
       params.push(`%${options.location.toLowerCase()}%`);
     }
-
-    // Filtro por fecha (si se proporciona)
-    if (options.date) {
-      paramCount++;
-      queryText += ` AND DATE(fecha) = $${paramCount}`;
-      params.push(options.date);
-    }
-
-    // Ordenar por fecha
-    queryText += ` ORDER BY fecha ASC`;
-
-    // Limitar resultados si se especifica
+    
     if (options.limit) {
-      paramCount++;
-      queryText += ` LIMIT $${paramCount}`;
-      params.push(options.limit);
+      queryText += ` LIMIT ${options.limit}`;
     }
-
-    console.log('🔍 Ejecutando consulta de eventos:', { queryText, params });
+    
     const result = await query(queryText, params);
-    
-    console.log(`📋 Encontrados ${result.rows.length} eventos`);
     return result.rows;
-    
   } catch (error) {
-    console.error('❌ Error al obtener eventos:', error);
-    throw error;
+    console.error('❌ Error en getEvents:', error);
+    return []; // Retornar array vacío en caso de error
   }
 };
 
-// Función para obtener expositores de un evento
 const getEventSpeakers = async (eventId) => {
   try {
-    const queryText = `
-      SELECT 
-        e.id_expositor,
-        e.nombre,
-        e.tema,
-        e.institucion,
-        e.especialidad,
-        e.biografia
-      FROM expositores e
-      INNER JOIN evento_expositores ee ON e.id_expositor = ee.id_expositor
-      WHERE ee.id_evento = $1
-      ORDER BY e.nombre ASC
-    `;
-
-    console.log('🎤 Buscando expositores para evento ID:', eventId);
-    const result = await query(queryText, [eventId]);
-    
-    console.log(`👨‍🏫 Encontrados ${result.rows.length} expositores`);
+    // Consulta básica - ajusta según tu estructura
+    const result = await query('SELECT * FROM expositores WHERE evento_id = $1', [eventId]);
     return result.rows;
-    
   } catch (error) {
-    console.error('❌ Error al obtener expositores:', error);
-    throw error;
+    console.error('❌ Error en getEventSpeakers:', error);
+    return [];
   }
 };
 
-// Función para obtener la agenda de un evento
 const getEventAgenda = async (eventId) => {
   try {
-    const queryText = `
-      SELECT 
-        id_agenda,
-        fecha,
-        actividades,
-        descripcion
-      FROM agenda
-      WHERE id_evento = $1
-      ORDER BY fecha ASC
-    `;
-
-    console.log('⏰ Buscando agenda para evento ID:', eventId);
-    const result = await query(queryText, [eventId]);
-    
-    console.log(`📅 Encontrados ${result.rows.length} elementos de agenda`);
+    // Consulta básica - ajusta según tu estructura
+    const result = await query('SELECT * FROM agenda WHERE evento_id = $1', [eventId]);
     return result.rows;
-    
   } catch (error) {
-    console.error('❌ Error al obtener agenda:', error);
-    throw error;
+    console.error('❌ Error en getEventAgenda:', error);
+    return [];
   }
 };
 
-// Actualizar el module.exports para incluir las nuevas funciones
+// Probar conexión al inicio
+testConnection();
+
 module.exports = {
   pool,
   query,
