@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import '../styles/configuracionc.css';
-import userLogo from '../assets/user-logo.png';
+import userLogo from '../../public/assets/user-logo.png';
 import { FaEye, FaEyeSlash, FaSave, FaTimes, FaUpload, FaTrash, FaBars } from 'react-icons/fa';
 import { fetchWithAuth } from '../utils/api';
 

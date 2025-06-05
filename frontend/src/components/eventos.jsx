@@ -1,4 +1,4 @@
-import sinImagen from '../assets/sinimagen.jpg';
+import sinImagen from '../../public/assets/sinimagen.jpg';
 import React, { useState, useEffect } from 'react';
 import { EventCalendar } from "./calendar";
 import { uploadImage } from "../firebase/firebaseStorage";
@@ -290,7 +290,7 @@ export const Eventos = () => {
                                 <tr key={event.id_evento || event.id}>
                                     <td>
                                         <img
-                                            src={event.imagen || event.image || sinImagen}
+                                            src={event.imagen ? `./assets/${event.imagen}` : sinImagen}
                                             alt="Portada del evento"
                                             className="event-thumbnail"
                                             onError={(e) => {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { postWithAuth } from '../utils/api';
 import { useTranslation } from "react-i18next";
-import defaultImage from '../assets/sinimagen.jpg';
+import defaultImage from '../../public/assets/sinimagen.jpg';
 import { format, parseISO, isBefore } from 'date-fns';
 import "../styles/5eventos.css";
 
@@ -25,6 +25,7 @@ const EventCarousel = () => {
       }
       const data = await response.json();
       setEvents(data);
+      console.log(data);
     } catch (err) {
       console.error(err.message);
     }
@@ -32,6 +33,10 @@ const EventCarousel = () => {
 
   const subscribeEvent = async (event) => {
     try {
+      if(!localStorage.getItem('token')){
+        alert("Necesitas logarte primero");
+        return;
+      }
       const data = await postWithAuth('https://bicentenario-production.up.railway.app/api/subscribirse', event);
       return data;
     } catch (err) {
@@ -165,9 +170,11 @@ const EventCarousel = () => {
     return (
       <div className="event-card">
         <div className="event-image-container">
+          
           <img
-            src={currentEvent.foto || defaultImage}
-            alt={currentEvent.nombre}
+
+            src={currentEvent.imagen ? `./assets/${currentEvent.imagen}` : defaultImage}
+            alt={currentEvent.imagen}
             className="event-image"
           />
         </div>
@@ -245,7 +252,7 @@ const EventCarousel = () => {
             <div className="modal-header">
               <button className="close-modal" onClick={closeEventDetails}>×</button>
               <img
-                src={selectedEvent.imagen || defaultImage}
+                src={selectedEvent.imagen ? `./assets/${selectedEvent.imagen}` : defaultImage}
                 alt={selectedEvent.nombre}
                 onError={(e) => {
                   e.target.onerror = null;

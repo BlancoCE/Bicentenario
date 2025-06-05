@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from "react-i18next";
 import { format, parseISO, isBefore } from 'date-fns';
 import "../styles/eventos.css";
-import defaultImage from '../assets/sinimagen.jpg';
+import defaultImage from '../../public/assets/sinimagen.jpg';
 import { fetchWithAuth, postWithAuth } from '../utils/api';
 
 export const Eventos = () => {
@@ -16,6 +16,42 @@ export const Eventos = () => {
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [subscribedEvents, setSubscribedEvents] = useState([]);
     const [loadingSubscriptions, setLoadingSubscriptions] = useState(true);
+    const [qrLoading, setQrLoading] = useState(false);
+    const [qrCode, setQrCode] = useState(''); // FALTA
+    const [showQrModal, setShowQrModal] = useState(false); // FALTA
+    const [qrError, setQrError] = useState('');
+
+     const generateQR = async (eventId) => {
+        setQrLoading(true);
+        setQrError(''); // Limpiar errores previos
+        
+        try {
+            const response = await fetch(`https://bicentenario-production.up.railway.app/api/eventos/${eventId}/qr`);
+            
+            if (!response.ok) {
+                const errorData = await response.text();
+                throw new Error(`Error ${response.status}: ${errorData || 'Error al generar el código QR'}`);
+            }
+            
+            const qrSvg = await response.text();
+            setQrCode(qrSvg);
+            setShowQrModal(true);
+            
+        } catch (err) {
+            console.error('Error generando QR:', err.message);
+            setQrError(err.message);
+            // En lugar de alert, mostrar el error en el estado
+        } finally {
+            setQrLoading(false);
+        }
+    };
+
+    // ✅ FUNCIÓN PARA CERRAR MODAL QR
+    const closeQrModal = () => {
+        setShowQrModal(false);
+        setQrCode('');
+        setQrError('');
+    };
 
     const fetchEvents = async () => {
         try {
@@ -192,7 +228,7 @@ export const Eventos = () => {
                         <div key={event.id_evento} className="evento-card">
                             <div className="evento-imagen-container">
                                 <img
-                                    src={event.imagen || defaultImage}
+                                    src={event.imagen ? `./assets/${event.imagen}` : defaultImage}
                                     alt={event.nombre}
                                     className="evento-imagen"
                                     onError={(e) => {
@@ -249,12 +285,10 @@ export const Eventos = () => {
             {selectedEvent && (
                 <div className="evento-modal">
                     <div className="evento-modal-content">
-
-
                         <div className="modal-header">
                             <button className="close-modal" onClick={closeEventDetails}>×</button>
                             <img
-                                src={selectedEvent.imagen || defaultImage}
+                                src={selectedEvent.imagen ? `./assets/${selectedEvent.imagen}` : defaultImage}
                                 alt={selectedEvent.nombre}
                                 onError={(e) => {
                                     e.target.onerror = null;
@@ -288,22 +322,53 @@ export const Eventos = () => {
                         </div>
 
                         <div className="modal-footer">
-                        <button
-                            className={`btn-subscribe ${
-                                isEventPast(selectedEvent) || isSubscribed(selectedEvent.id_evento) ? 'disabled' : ''
-                            } ${
-                                isSubscribed(selectedEvent.id_evento) ? 'subscribed' : ''
-                            }`}
-                            onClick={() => !isEventPast(selectedEvent) && !isSubscribed(selectedEvent.id_evento) && subscribeEvent(selectedEvent)}
-                            disabled={isEventPast(selectedEvent) || isSubscribed(selectedEvent.id_evento) || loadingSubscriptions}
-                        >
-                            {loadingSubscriptions ? 'Cargando...' : 
-                             isSubscribed(selectedEvent.id_evento) ? 'Suscrito ✓' : t('eventos.suscribirse')}
-                        </button>
-                        <button className='QR'>
-                            Generar QR
-                        </button>
+                            <button
+                                className={`btn-subscribe ${
+                                    isEventPast(selectedEvent) || isSubscribed(selectedEvent.id_evento) ? 'disabled' : ''
+                                } ${
+                                    isSubscribed(selectedEvent.id_evento) ? 'subscribed' : ''
+                                }`}
+                                onClick={() => !isEventPast(selectedEvent) && !isSubscribed(selectedEvent.id_evento) && subscribeEvent(selectedEvent)}
+                                disabled={isEventPast(selectedEvent) || isSubscribed(selectedEvent.id_evento) || loadingSubscriptions}
+                            >
+                                {loadingSubscriptions ? 'Cargando...' : 
+                                 isSubscribed(selectedEvent.id_evento) ? 'Suscrito ✓' : t('eventos.suscribirse')}
+                            </button>
+                            
+                            <button 
+                                className={`QR ${qrLoading ? 'loading' : ''}`}
+                                onClick={() => generateQR(selectedEvent.id_evento)}
+                                disabled={qrLoading}
+                            >
+                                {qrLoading ? 'Generando...' : 'Generar QR'}
+                            </button>
+                            
+                            {/* ✅ MOSTRAR ERROR SI EXISTE */}
+                            {qrError && (
+                                <div className="qr-error" style={{color: 'red', marginTop: '10px'}}>
+                                    Error: {qrError}
+                                </div>
+                            )}
+                        </div>
                     </div>
+                </div>
+            )}
+             {/* ✅ MODAL QR AGREGADO */}
+            {showQrModal && (
+                <div className="qr-modal">
+                    <div className="qr-modal-content">
+                        <div className="qr-modal-header">
+                            <h3>Código QR del Evento</h3>
+                            <button className="close-qr-modal" onClick={closeQrModal}>×</button>
+                        </div>
+                        <div className="qr-modal-body">
+                            {qrCode && (
+                                <div 
+                                    className="qr-code-container"
+                                    dangerouslySetInnerHTML={{ __html: qrCode }}
+                                />
+                            )}
+                        </div>
                     </div>
                 </div>
             )}

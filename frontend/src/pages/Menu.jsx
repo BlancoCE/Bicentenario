@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react"; // Añadimos useRef
 import { useTranslation } from "react-i18next";
-import logo from '../assets/logo2.png';
+import logo from '../../public/assets/logo2.png';
 import "../styles/menu.css";
 
 export const Menu = () => {

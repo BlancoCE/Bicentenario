@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from "react-i18next";
 import { format, differenceInDays, differenceInHours, differenceInMinutes, differenceInSeconds } from 'date-fns';
-import logo from '../assets/Bicentenario-Bo.png';
+
 import { EventCalendar } from "../components/calendar";
 import EventCarousel from "../components/5eventos";
 import '../styles/contador.css';
@@ -81,7 +81,6 @@ export const Inicio = () => {
     });
     setShowModal(true);
   };
-
   return (
     <>
       <div className="header-section">
