@@ -128,7 +128,7 @@ export const RegisterForm = () => {
 
             // 🔹 Registro exitoso   ARREGLAR
             setShowModal(true);
-            setTimeout(() => navigate("/"), 2500);
+            setTimeout(() => navigate("/"), 5000);
 
         } catch (error) {
             console.error("Error al registrar:", error);
@@ -142,6 +142,7 @@ export const RegisterForm = () => {
                 <div className="modal">
                     <div className="modal-content">
                         <h2>Registro Exitoso 🎉</h2>
+                        <p>Revise su correo para confimar su cuenta</p>
                         <p>Serás redirigido a la página de inicio en instantes</p>
                     </div>
                 </div>

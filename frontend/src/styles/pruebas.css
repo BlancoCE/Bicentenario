@@ -366,6 +366,7 @@ body {
   display: grid;
   grid-template-columns: 1fr;
   gap: 2rem;
+  margin-top: 2rem;
 }
 
 .chart-container {
@@ -385,7 +386,7 @@ body {
 }
 
 .chart-placeholder {
-  height: 300px;
+  height: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
