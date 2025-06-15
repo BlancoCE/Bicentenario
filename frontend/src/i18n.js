@@ -32,6 +32,7 @@ const resources = {
       "eventos.mas_info": "Mas información",
       "eventos.suscribirse": "Suscribirse",
       "eventos.pasado": "Pasado",
+      "eventos.no_eventos": "Sin eventos",
     }
   },
   en: {
